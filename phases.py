@@ -6,7 +6,8 @@ import numpy as np
 from numpy import linalg as LA
 import subprocess 
 from tkinter import *
-import Levenshtein
+
+
 
 def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     Fragebogen = PIL.Image.open(Questionnaire)
@@ -227,24 +228,24 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     typ = ""
 
     for word in s_deu.split():
-        if Levenshtein.distance(word,'Vorlesungen')<5:
+        if evalFuns.minimumEditDistance(word,'Vorlesungen')<5:
             typ = "Vorlesung1"
             break
-        elif not Levenshtein.distance(word,'Fragebogen')<5 and (Levenshtein.distance(word,'Wurde')<3 or Levenshtein.distance(word,'Übungstermin')<5 or Levenshtein.distance(word,'angeboten?')<5):
+        elif not evalFuns.minimumEditDistance(word,'Fragebogen')<5 and (evalFuns.minimumEditDistance(word,'Wurde')<3 or evalFuns.minimumEditDistance(word,'Übungstermin')<5 or evalFuns.minimumEditDistance(word,'angeboten?')<5):
             typ = "Vorlesung2"
             break
-        elif Levenshtein.distance(word,'Seminare')<5 or Levenshtein.distance(word,'Praktika')<5:
+        elif evalFuns.minimumEditDistance(word,'Seminare')<5 or evalFuns.minimumEditDistance(word,'Praktika')<5:
             typ = "Seminar"
             break
 
     for word in s_eng.split():
-        if Levenshtein.distance(word,'lectures')<5:
+        if evalFuns.minimumEditDistance(word,'lectures')<5:
             typ = "Vorlesung1"
             break
-        elif not Levenshtein.distance(word,'questionnaire')<5 and (Levenshtein.distance(word,'exercise')<5 or Levenshtein.distance(word,'meetings')<3 or Levenshtein.distance(word,'belonging')<5):
+        elif not evalFuns.minimumEditDistance(word,'questionnaire')<5 and (evalFuns.minimumEditDistance(word,'exercise')<5 or evalFuns.minimumEditDistance(word,'meetings')<3 or evalFuns.minimumEditDistance(word,'belonging')<5):
             typ = "Vorlesung2"
             break
-        elif Levenshtein.distance(word,'seminars')<5 or Levenshtein.distance(word,'practical')<5:
+        elif evalFuns.minimumEditDistance(word,'seminars')<5 or evalFuns.minimumEditDistance(word,'practical')<5:
             typ = "Seminar"
             break
 
@@ -644,13 +645,13 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
     typ = ""
 
     for word in s.split():
-        if Levenshtein.distance(word,'Vorlesungen')<5:
+        if evalFuns.minimumEditDistance(word,'Vorlesungen')<5:
             typ = "Vorlesung1"
             break
-        elif not Levenshtein.distance(word,'Fragebogen')<5 and (Levenshtein.distance(word,'Wurde')<3 or Levenshtein.distance(word,'Übungstermin')<5 or Levenshtein.distance(word,'angeboten?')<5):
+        elif not evalFuns.minimumEditDistance(word,'Fragebogen')<5 and (evalFuns.minimumEditDistance(word,'Wurde')<3 or evalFuns.minimumEditDistance(word,'Übungstermin')<5 or evalFuns.minimumEditDistance(word,'angeboten?')<5):
             typ = "Vorlesung2"
             break
-        elif Levenshtein.distance(word,'Seminare')<5 or Levenshtein.distance(word,'Praktika')<5:
+        elif evalFuns.minimumEditDistance(word,'Seminare')<5 or evalFuns.minimumEditDistance(word,'Praktika')<5:
             typ = "Seminar"
             break
 

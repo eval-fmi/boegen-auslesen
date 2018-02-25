@@ -61,6 +61,7 @@ if(argv[1][-1]!="/"):
 sys.stdout.write("Fortschritt: 0.00%")
 toDo = []
 VLs = list(os.listdir(argv[1]))
+print(len(VLs))
 VLs = sorted(VLs,key=str.lower)
 for VL in VLs:
     if os.path.isdir(argv[1]+VL):
@@ -72,6 +73,7 @@ for VL in VLs:
                 toDo = toDo + [argv[1]+VL+"/"+FB]
 
 toDoCount = len(toDo)
+print(len(toDo))
 
 counter = 0
 toDoAgain = []

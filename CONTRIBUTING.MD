@@ -4,10 +4,11 @@
 
 ### VM
 
-Um das Auslesen zu nutzen, sollte eine VM (Ubuntu 16.4) genutzt werden.
+Um das Auslesen zu nutzen, sollte eine VM (Ubuntu 18.4) genutzt werden.
 Mittels der `prepareSystem.sh` werden die notwendigen Pakete installiert.
 
 Muss überarbeitet werden:
+
 ### Python und Pipenv
 
 - Es wird Python 3 verwendet.
@@ -20,7 +21,7 @@ Muss überarbeitet werden:
 
 - Die neuste Version wird vom dev-branch geladen
 - `pipenv` wird ausgeführt um alle Abhängigkeiten zu lösen und alle benötigten Pakete zu laden.
-- mit `pipenv shell` wird die Umgebung gestart
+- mit `pipenv shell` wird die Umgebung gestartet
 
 ## Testen
 

@@ -1,4 +1,7 @@
-04.01.2018
+# Log
+
+## 04.01.2018
+
 Eval Software
 
 Der folgende Link repräsentiert eine typische Veranstaltungsseite so wie sie hoffentlich heruntergeladen werden kann: 
@@ -11,7 +14,8 @@ https://eval.fmi.uni-jena.de/phpmyadmin/server_export.php?db=&table=&server=1&ta
 
 geht doch nicht :(
 
-06.01.2018
+## 06.01.2018
+
 Wie man für einen vorhandene Benutzer etwas freischaltet: 
 
 Die fertigen Ergebnisse liegen unter webhome File Dozentenname dort fanden kann dann auf sie zugegriffen werden 

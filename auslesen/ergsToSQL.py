@@ -1,235 +1,239 @@
 #!/usr/bin/env python3
 
+""" Dokumentation
+Durch dieses Skript wird eine Datei erstellt, indem die Daten der Fragebögen
+in SQL-Code stehen.
+"""
  
 with open("./presql.txt", "r") as f:
     lines = f.read().splitlines()
 file = open("./ergs.sql", "w")
 
-n=len(lines)
+anz_lines = len(lines)
 i = 0
 
-while i<n:
-    line = lines[i].split(";")
-    a = line[1:]
-
-
-    if (i+1<n) and (int(line[0])==int(lines[i+1].split(";")[0])) and (int(line[2].split(",")[0])==1 and int(lines[i+1].split(";")[2].split(",")[0])==39): #falls vorder- und rueckseite eines vl-bogens 
-        nextline = lines[i+1].split(";")
-        b = nextline[2:]
-        a = a+b
-
-
+while i < anz_lines:
+    data = lines[i].split(";")
+    answers = data[1:]
+    print(f"wir sind bei Vl {data[0]}")
+    
+    #gucken, ob ein Vl-Bogen vorliegt (Vorder- und Rueckseite sind da)
+    next_data = lines[i+1].split(";")
+    if (i+1 < anz_lines) and (int(data[0]) == int(next_data[0])) and (int(data[2].split(',')[0])==1 and int(next_data[2].split(',')[0])==39):
+        answers_page_2 = next_data[2:]
+        answers = answers + answers_page_2
 
         for j in range(1,63):
-            if j<len(a):
-                if int(a[j].split(",")[0]) != j:
-                    a.insert(j,str(j))
+            if j < len(answers):
+                if int(answers[j].split(',')[0]) != j:
+                    answers.insert(j,str(j))
             else:
-                a.append(str(j))
+                answers.append(str(j))
 
-        sqlline = "INSERT INTO vorlesungsbogen VALUES (NULL, "
-        sqlline +="'"+str(int(line[0]))+"', " # modulID
+        sql_line = "INSERT INTO vorlesungsbogen VALUES (NULL, "
+        sql_line += f"\'{str(int(data[0]))}\', " # modulID
         
         for j in range(1,17):   #studienfach
-            if str(j) in a[1].split(",")[1:]:
-                sqlline +="'1', "
+            if str(j) in answers[1].split(',')[1:]:
+                sql_line += "\'1\', "
             else:
-                sqlline +="'0', "
+                sql_line += "\'0\', "
 
-        sqlline +="'"+str(a[2].split(",")[1])+"', " #fachsem
+        sql_line += f"\'{str(answers[2].split(',')[1])}\', " #fachsem
 
         for j in range(1,7):   #gruende
-            if str(j) in a[3].split(",")[1:]:
-                sqlline +="'1', "
+            if str(j) in answers[3].split(',')[1:]:
+                sql_line += "\'1\', "
             else:
-                sqlline +="'0', "
+                sql_line += "\'0\', "
 
         for j in range(1,5): # teilnahme
-            if str(j) in a[4].split(",")[1:]:
-                sqlline +="'"+str(j)+"', "
+            if str(j) in answers[4].split(',')[1:]:
+                sql_line += f"\'{str(j)}\', "
         
         for j in range(5,11): # teilnahmegrund
-            if str(j) in a[4].split(",")[1:]:
-                sqlline +="'1', "
+            if str(j) in answers[4].split(',')[1:]:
+                sql_line += "\'1\', "
             else:
-                sqlline +="'0', "
+                sql_line += "\'0\', "
 
         for j in range(1,7): # aufwand modul
-            if str(j) in a[5].split(",")[1:]:
-                sqlline +="'"+str(j)+"', "
+            if str(j) in answers[5].split(',')[1:]:
+                sql_line += f"\'{str(j)}\', "
 
         for j in range(7,13): # aufwand alle module
-            if str(j) in a[5].split(",")[1:]:
-                sqlline +="'"+str(j-6)+"', "
+            if str(j) in answers[5].split(',')[1:]:
+                sql_line += f"\'{str(j-6)}\', "
 
-        sqlline +="'"+str(a[6].split(",")[1])+"', " # aufwand
+        sql_line += f"\'{str(answers[6].split(',')[1])}\', " # aufwand
 
         for j in range(7,17):
-            sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 7 bis 16
+            sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 7 bis 16
 
         for j in range(17,27):
-            sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 17 bis 26
+            sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 17 bis 26
 
-        sqlline +="'"+str(a[27].split(",")[1])+"', " # tempo
+        sql_line += f"\'{str(answers[27].split(',')[1])}\', " # tempo
 
-        sqlline +="'"+str(a[28].split(",")[1])+"', " # tafelbenutzung
+        sql_line += f"\'{str(answers[28].split(',')[1])}\', " # tafelbenutzung
 
-        if a[28].split(",")[1]=="1":
+        if answers[28].split(',')[1]=="1":
             for j in range(29,33):
-                sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 29 bis 32
+                sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 29 bis 32
         else:
             for j in range(29,33):
-                sqlline += "'', " # frage 29 bis 32
+                sql_line += "\'\', " # frage 29 bis 32
 
-        sqlline +="'"+str(a[33].split(",")[1])+"', " # beamerverwendung
+        sql_line += f"\'{str(answers[33].split(',')[1])}\', " # beamerverwendung
 
-        if a[33].split(",")[1]=="1":
+        if answers[33].split(',')[1]=="1":
             for j in range(34,39):
-                sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 34 bis 38
+                sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 34 bis 38
         else:
             for j in range(34,39):
-                sqlline += "'', " # frage 34 bis 38
+                sql_line += "\'\', " # frage 34 bis 38
 
-        sqlline +="'"+str(a[39].split(",")[1])+"', " # skript
+        sql_line += f"\'{str(answers[39].split(',')[1])}\', " # skript
 
-        if a[39].split(",")[1]=="1":
+        if answers[39].split(',')[1]=="1":
             for j in range(40,44):
-                sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 34 bis 38
+                sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 34 bis 38
         else:
             for j in range(40,44):
-                sqlline += "'', " # frage 34 bis 38
+                sql_line += "\'\', " # frage 34 bis 38
 
 
-        sqlline +="'"+str(a[44].split(",")[1])+"', " # uebungsteilnahme
+        sql_line += f"\'{str(answers[44].split(',')[1])}\', " # uebungsteilnahme
 
-        if a[44].split(",")[1]=="1":   
-            sqlline += "'"+str(a[45].split(",")[1])+"', " # uebungsleiter
+        if answers[44].split(',')[1]=="1":   
+            sql_line += f"\'{str(answers[45].split(',')[1])}\', " # uebungsleiter
 
             for j in range(1,4): # teilnahme uebung
-                if str(j) in a[46].split(",")[1:]:
-                    sqlline +="'"+str(j)+"', "
+                if str(j) in answers[46].split(',')[1:]:
+                    sql_line += f"\'{str(j)}\', "
 
             for j in range(4,10): # teilnahmegrund uebung
-                if str(j) in a[46].split(",")[1:]:
-                    sqlline +="'1', "
+                if str(j) in answers[46].split(',')[1:]:
+                    sql_line += "\'1\', "
                 else:
-                    sqlline +="'0', "
+                    sql_line += "\'0\', "
 
-            if not("3" in a[46].split(",")[1:]): # falls uebungsteilnahme nicht "nie"
+            if not("3" in answers[46].split(',')[1:]): # falls uebungsteilnahme nicht "nie"
                 for j in range(47,54):
-                    sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 47 bis 53
+                    sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 47 bis 53
 
-                sqlline +="'"+str(a[54].split(",")[1])+"', " # uebungstempo
+                sql_line += f"\'{str(answers[54].split(',')[1])}\', " # uebungstempo
             else:
                 for j in range(47,55):
-                    sqlline += "'', " # frage 47 bis 54
+                    sql_line += "\'\', " # frage 47 bis 54
 
         else:
-            sqlline +="'', " # kein uebungsleiter
+            sql_line += "\'\', " # kein uebungsleiter
 
-            sqlline +="'', " # teilnahme uebung
+            sql_line += "\'\', " # teilnahme uebung
 
             for j in range(4,10): # teilnahmegrund uebung
-                sqlline +="'', "
+                sql_line += "\'\', "
 
             for j in range(47,54):
-                sqlline += "'', " # frage 47 bis 53
+                sql_line += "\'\', " # frage 47 bis 53
 
-            sqlline +="'', " # uebungstempo
+            sql_line += "\'\', " # uebungstempo
 
 
-        sqlline +="'"+str(a[55].split(",")[1])+"', " # uebungsaufgaben angeboten
+        sql_line += f"\'{str(answers[55].split(',')[1])}\', " # uebungsaufgaben angeboten
 
-        if a[55].split(",")[1]=="1":
+        if answers[55].split(',')[1]=="1":
             for j in range(1,4): # uebungsaufgaben bearbeitet
-                if str(j) in a[56].split(",")[1:]:
-                    sqlline +="'"+str(j)+"', "
+                if str(j) in answers[56].split(',')[1:]:
+                    sql_line += f"\'{str(j)}\', "
 
             for j in range(4,10): # grund fuer bearbeitung
-                if str(j) in a[56].split(",")[1:]:
-                    sqlline +="'1', "
+                if str(j) in answers[56].split(',')[1:]:
+                    sql_line += "\'1\', "
                 else:
-                    sqlline +="'0', "
+                    sql_line += "\'0\', "
 
-            if not("3" in a[56].split(",")[1:]): # falls beabeitung nicht "nie"
+            if not("3" in answers[56].split(',')[1:]): # falls beabeitung nicht "nie"
                 for j in range(57,62):
-                    sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 57 bis 61
+                    sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 57 bis 61
 
-                sqlline +="'"+str(a[62].split(",")[1])+"');" # schwierigkeitsgrad aufgaben
+                sql_line += "'"+str(answers[62].split(',')[1])+"');" # schwierigkeitsgrad aufgaben
             else:
                 for j in range(57,62):
-                    sqlline += "'', " # frage 57 bis 61
-                sqlline += "'');"
+                    sql_line += "\'\', " # frage 57 bis 61
+                sql_line += "'');"
         else:
-            sqlline +="'', " # keine teilnahme
+            sql_line += "\'\', " # keine teilnahme
 
             for j in range(6):
-                sqlline +="'', "
+                sql_line += "\'\', "
             
             for j in range(57,62):
-                sqlline += "'', "
-            sqlline += "'');"
+                sql_line += "\'\', "
+            sql_line += "'');"
 
-        file.write(sqlline+"\n")
-        i+=2
-            
-    elif a[1].split(",")[0]=="1": # Seminarbogen
+        file.write(sql_line+"\n")
+        i += 2
+    
+    # Abarbeitung der Seminarboegen
+    elif answers[1].split(',')[0]=="1":
         
         for j in range(1,121): # etwas verschwendung, erspart aber dictionary
-            if j<len(a):
-                if int(a[j].split(",")[0]) != j:
-                    a.insert(j,str(j))
+            if j<len(answers):
+                if int(answers[j].split(',')[0]) != j:
+                    answers.insert(j,str(j))
             else:
-                a.append(str(j))
+                answers.append(str(j))
 
-        sqlline = "INSERT INTO seminarbogen VALUES (NULL, "
-        sqlline +="'"+str(int(line[0]))+"', " # modulID
+        sql_line = "INSERT INTO seminarbogen VALUES (NULL, "
+        sql_line += f"\'{str(int(data[0]))}\', " # modulID
         
         for j in range(1,17):   #studienfach
-            if str(j) in a[1].split(",")[1:]:
-                sqlline +="'1', "
+            if str(j) in answers[1].split(',')[1:]:
+                sql_line += "\'1\', "
             else:
-                sqlline +="'0', "
+                sql_line += "\'0\', "
 
-        sqlline +="'"+str(a[2].split(",")[1])+"', " #fachsem
-
+        sql_line += f"\'{str(answers[2].split(',')[1])}\', " #fachsem
+        
         for j in range(1,7):   #gruende
-            if str(j) in a[3].split(",")[1:]:
-                sqlline +="'1', "
+            if str(j) in answers[3].split(',')[1:]:
+                sql_line += "\'1\', "
             else:
-                sqlline +="'0', "
+                sql_line += "\'0\', "
 
         for j in range(1,5): # teilnahme
-            if str(j) in a[4].split(",")[1:]:
-                sqlline +="'"+str(j)+"', "
+            if str(j) in answers[4].split(',')[1:]:
+                sql_line += f"\'{str(j)}\', "
         
         for j in range(5,11): # teilnahmegrund
-            if str(j) in a[4].split(",")[1:]:
-                sqlline +="'1', "
+            if str(j) in answers[4].split(',')[1:]:
+                sql_line += "\'1\', "
             else:
-                sqlline +="'0', "
+                sql_line += "\'0\', "
 
         for j in range(1,7): # aufwand modul
-            if str(j) in a[5].split(",")[1:]:
-                sqlline +="'"+str(j)+"', "
+            if str(j) in answers[5].split(',')[1:]:
+                sql_line += f"\'{str(j)}\', "
 
         for j in range(7,13): # aufwand alle module
-            if str(j) in a[5].split(",")[1:]:
-                sqlline +="'"+str(j-6)+"', "
+            if str(j) in answers[5].split(',')[1:]:
+                sql_line += f"\'{str(j-6)}\', "
 
-        sqlline +="'"+str(a[6].split(",")[1])+"', " # aufwand
+        sql_line += f"\'{str(answers[6].split(',')[1])}\', " # aufwand
 
         for j in range(7,17):
-            sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 7 bis 16
+            sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 7 bis 16
 
 
         for j in range(117,120):
-            sqlline += "'"+str(a[j].split(",")[1])+"', " # frage 17 bis 19 auf seminarbogen
-        sqlline += "'"+str(a[120].split(",")[1])+"');"
+            sql_line += f"\'{str(answers[j].split(',')[1])}\', " # frage 17 bis 19 auf seminarbogen
+        sql_line += "'"+str(answers[120].split(',')[1])+"');"
 
-        file.write(sqlline+"\n")
-        i+=1
+        file.write(sql_line+"\n")
+        i += 1
     else:
-        i+=1
+        i += 1
         
 file.close()

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+
+"""
+Ordn
+"""
+
 vls = set()
 
 file = open("./ergs.txt", "r")

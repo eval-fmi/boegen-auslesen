@@ -218,12 +218,12 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     box = (Left[0],int(Top[1]+(Left[1]-Top[1])/2.7),Top[0],int(Left[1]-(Left[1]-Top[1])/1.7))
     if(box[0]>=box[2] or box[1]>=box[3]):
         return ["help",Questionnaire]
-    Fragebogen.crop(box).save(Questionnaire+".crop", "JPEG",optimize=True)
+    Fragebogen.crop(box).save(Questionnaire+".crop", "PNG",optimize=True)
     # Texterkennung tesseract wird auf Datei.crop angewendet mit Sprache Deutsch und Ergebnis an stdout geschickt
     s_deu=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l deu'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
     s_eng=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l eng'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
 
-    Fragebogen.save(Questionnaire+".processed", "JPEG",optimize=True)
+    Fragebogen.save(Questionnaire+".processed", "PNG",optimize=True)
 
     questions = []
     typ = ""
@@ -631,14 +631,14 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             Left = shakeRightRGB(FB,wi,he,searchRGBBlack(FB,wi,he,Left,40)) 
 
 
-    Fragebogen.convert("1", dither=PIL.Image.NONE).save(Questionnaire+".processed","JPEG",optimize=True)
+    Fragebogen.convert("1", dither=PIL.Image.NONE).save(Questionnaire+".processed","PNG",optimize=True)
 
     height=.01*(Bottom[1]-Top[1])
     width=.01*(Right[0]-Left[0])
 
     origin = np.array((Left[0],Top[1]))
     box = (Left[0],int(Top[1]+(Left[1]-Top[1])/2.7),Top[0],int(Left[1]-(Left[1]-Top[1])/1.7))
-    Fragebogen.crop(box).save(Questionnaire+".crop", "JPEG",optimize=True)
+    Fragebogen.crop(box).save(Questionnaire+".crop", "PNG",optimize=True)
     s=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l deu'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
 
 
@@ -756,7 +756,7 @@ def phase2(typ,Questionnaire,origin,width,height):
         res=res+[s]
 
 
-    Fragebogen.save(Questionnaire, "JPEG",optimize=True)
+    Fragebogen.save(Questionnaire, "PNG",optimize=True)
 
     return res
     #file.close()

@@ -108,10 +108,16 @@ for leftborder in [0,1]:
 toDoManually = toDo
 
 
-anzahl=len(toDoManually)
+anzahl = len(toDoManually)
 for Questionnaire in toDoManually:
-    erg=phase1M(Questionnaire,anzahl)
-    anzahl-=1
+    clear = False
+    while clear == False:
+        try:
+            erg=phase1M(Questionnaire,anzahl)
+            clear = True
+        except TypeError:
+            print("Irgendwas hat hier nicht funktioniert! Versuch es nochmal.")
+    anzahl -= 1
     if erg == []:
         counter+=1
     else:

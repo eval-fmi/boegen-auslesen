@@ -2,7 +2,7 @@
 
 
 """
-Ordn
+Sortiert die Einträge in ergs.txt nach der Veranstalung.
 """
 
 vls = set()

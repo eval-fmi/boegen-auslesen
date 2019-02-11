@@ -1,0 +1,4 @@
+numpy==1.15.4
+opencv-python==3.4.5.20
+Pillow==5.4.1
+python-Levenshtein==0.12.0

@@ -1,7 +1,6 @@
 from evalFuns import *
 import sys
-from PIL import ImageDraw, ImageFilter, ImageTk
-import PIL.Image
+from PIL import Image, ImageDraw, ImageFilter, ImageTk
 import numpy as np
 from numpy import linalg as LA
 import subprocess 
@@ -11,7 +10,7 @@ import Levenshtein
 
 
 def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
-    Fragebogen = PIL.Image.open(Questionnaire)
+    Fragebogen = Image.open(Questionnaire)
     a,b = Fragebogen.size
 
     Fragebogen = Fragebogen.convert('1', dither=PIL.Image.NONE)
@@ -522,8 +521,8 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             alpha=np.arccos(cosalpha)*360 / 2 / np.pi
 
             rot=Fragebogen.rotate(alpha if Bottom[1]>BottomLeft[1] else -alpha, expand=1) 
-            fff=PIL.Image.new('RGBA',rot.size,(255,)*4)
-            Fragebogen=PIL.Image.composite(rot,fff,rot)
+            fff=Image.new('RGBA',rot.size,(255,)*4)
+            Fragebogen=Image.composite(rot,fff,rot)
 
             FB = Fragebogen.load()
             Bottom = findRedBottom(FB,Fragebogen.size[0],Fragebogen.size[1])

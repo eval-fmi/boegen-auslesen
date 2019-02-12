@@ -13,7 +13,7 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     Fragebogen = Image.open(Questionnaire)
     a,b = Fragebogen.size
 
-    Fragebogen = Fragebogen.convert('1', dither=PIL.Image.NONE)
+    Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
     FragebogenGefiltert=Fragebogen.filter(ImageFilter.MedianFilter(5))         
     FB = FragebogenGefiltert.load()
 
@@ -117,8 +117,8 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     FB[Right[0]-1,Right[1]]=(255,0,0,255)
 
     rot=Fragebogen.rotate(alpha if Right[1]>Left[1] else -alpha, expand=1) 
-    fff=PIL.Image.new('RGBA',rot.size,(255,)*4)
-    Fragebogen=PIL.Image.composite(rot,fff,rot)
+    fff=Image.new('RGBA',rot.size,(255,)*4)
+    Fragebogen=Image.composite(rot,fff,rot)
     
     a,b=Fragebogen.size
     FB=Fragebogen.load()
@@ -256,8 +256,8 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
 
 def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen drehen und Ecken markieren
     gedreht = False
-    Fragebogen = PIL.Image.open(Questionnaire)
-    Fragebogen = Fragebogen.convert('1', dither=PIL.Image.NONE)
+    Fragebogen = Image.open(Questionnaire)
+    Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
     while(not gedreht):
         if(Fragebogen.size[0]<Fragebogen.size[1]):
             b=600
@@ -267,7 +267,7 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             b=a*Fragebogen.size[1]//Fragebogen.size[0]
 
         window = Tk()
-        image = Fragebogen.resize((a,b), PIL.Image.ANTIALIAS)
+        image = Fragebogen.resize((a,b), Image.ANTIALIAS)
 
         message = "Drehe bitte manuell den Fragebogen in die korrekte Position (noch "+str(anzahl)+")."
 
@@ -306,7 +306,7 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
     
     possible = True
     window = Tk()
-    image = Fragebogen.resize((a,b), PIL.Image.ANTIALIAS)
+    image = Fragebogen.resize((a,b), Image.ANTIALIAS)
 
     message = "Bitte klicke moeglichst praezise auf 3 sichtbare Markierungen, die ueber Eck liegen (Ecke + 2 Mittelmarkierungen)."
     
@@ -472,8 +472,8 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             alpha=np.arccos(cosalpha)*360 / 2 / np.pi
 
             rot=Fragebogen.rotate(alpha if Top[1]>TopLeft[1] else -alpha, expand=1) 
-            fff=PIL.Image.new('RGBA',rot.size,(255,)*4)
-            Fragebogen=PIL.Image.composite(rot,fff,rot)
+            fff=Image.new('RGBA',rot.size,(255,)*4)
+            Fragebogen=Image.composite(rot,fff,rot)
 
             FB = Fragebogen.load()
             Top = findRedTop(FB,Fragebogen.size[0],Fragebogen.size[1])
@@ -570,8 +570,8 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             alpha=np.arccos(cosalpha)*360 / 2 / np.pi
 
             rot=Fragebogen.rotate(alpha if TopRight[1]>Top[1] else -alpha, expand=1) 
-            fff=PIL.Image.new('RGBA',rot.size,(255,)*4)
-            Fragebogen=PIL.Image.composite(rot,fff,rot)
+            fff=Image.new('RGBA',rot.size,(255,)*4)
+            Fragebogen=Image.composite(rot,fff,rot)
 
             FB = Fragebogen.load()
             Top = findRedTop(FB,Fragebogen.size[0],Fragebogen.size[1])
@@ -618,8 +618,8 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             alpha=np.arccos(cosalpha)*360 / 2 / np.pi
 
             rot=Fragebogen.rotate(alpha if BottomRight[1]>Bottom[1] else -alpha, expand=1) 
-            fff=PIL.Image.new('RGBA',rot.size,(255,)*4)
-            Fragebogen=PIL.Image.composite(rot,fff,rot)
+            fff=Image.new('RGBA',rot.size,(255,)*4)
+            Fragebogen=Image.composite(rot,fff,rot)
 
             FB = Fragebogen.load()
             Bottom = findRedBottom(FB,Fragebogen.size[0],Fragebogen.size[1])
@@ -630,7 +630,7 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
             Left = shakeRightRGB(FB,wi,he,searchRGBBlack(FB,wi,he,Left,40)) 
 
 
-    Fragebogen.convert("1", dither=PIL.Image.NONE).save(Questionnaire+".processed","PNG",optimize=True)
+    Fragebogen.convert("1", dither=Image.NONE).save(Questionnaire+".processed","PNG",optimize=True)
 
     height=.01*(Bottom[1]-Top[1])
     width=.01*(Right[0]-Left[0])
@@ -663,7 +663,7 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
     
 
 def phase2(typ,Questionnaire,origin,width,height):
-    Fragebogen = PIL.Image.open(Questionnaire)
+    Fragebogen = Image.open(Questionnaire)
     Fragebogen = Fragebogen.convert('RGBA')
     FB = Fragebogen.load()
 
@@ -765,8 +765,8 @@ def phase2(typ,Questionnaire,origin,width,height):
 
 def phase2M(Questionnaire,anzahl):
 
-    Fragebogen = PIL.Image.open(Questionnaire[0])
-    Fragebogen = Fragebogen.convert('1', dither=PIL.Image.NONE)
+    Fragebogen = Image.open(Questionnaire[0])
+    Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
 
     if(Fragebogen.size[0]<Fragebogen.size[1]):
         b=600
@@ -776,7 +776,7 @@ def phase2M(Questionnaire,anzahl):
         b=a*Fragebogen.size[1]//Fragebogen.size[0]
 
     window = Tk()
-    image = Fragebogen.resize((a,b), PIL.Image.ANTIALIAS)
+    image = Fragebogen.resize((a,b), Image.ANTIALIAS)
 
     message = "Bitte hilf bei der Erkennung des Fragebogentyps (noch "+str(anzahl)+")."
 

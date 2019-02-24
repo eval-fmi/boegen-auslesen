@@ -46,14 +46,12 @@ import sys
 import os
 from subprocess import call
 import logging
-
-from numpy import linalg as LA
 import multiprocessing
 import tkinter
 from concurrent import futures
 
 # TODO kann ich das rausnehmen?
-from phases import phase1, phase1M, phase2, phase2M
+from .phases import phase1, phase1M, phase2, phase2M
 
 logging.basicConfig(filename=f'{(__file__)[:-3]}.log', level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s', datefmt = "%H:%M-%x")
 logger = logging.getLogger()
@@ -62,14 +60,18 @@ logger.addHandler(logging.StreamHandler())
 
 def fbs_vorbereiten(root_ordner):
     """ entnimmt die Fragebögen aus den Ordnern und bereitet sie für
-        Bearbeitung vor. root_ordner vom Typ Path
+        Bearbeitung vor. root_ordner vom Typ str
     """
 
     logger.info("Fragebögen werden vorbereitet")
     fbs_liste = []
 
+    if not os.path.isdir(root_ordner):
+        logger.error(root_ordner + " ist kein Verzeichnis.", exec = True)
+    if not root_ordner.endswith("/"):
+        root_ordner += "/"
+
     # sortiert die Fragebögen in dem Root-Ordner aus den jeweiligen Ordnern und
-    #  
     unsortierte_vls = list(os.listdir(root_ordner))
     sortierte_vls = sorted(unsortierte_vls, key=str.lower)
     for vl_num in sortierte_vls:
@@ -78,10 +80,9 @@ def fbs_vorbereiten(root_ordner):
             fbs = list(os.listdir(vl_pfad))
             fbs = sorted(fbs, key=str.lower)
             for fb in fbs:
-                fb_path = vl_pfad + fb
                 split = fb.rpartition('.')
                 if split[-1].lower() in ['tif','tiff','gif','jpg','jpeg','png']:
-                    fbs_liste.append(fb_path)
+                    fbs_liste.append(vl_pfad +"/"+ fb)
 
     logger.info("Es gibt " +str(len(fbs_liste))+ " Fragebögen.")
     return fbs_liste
@@ -98,6 +99,7 @@ def phase1_durchfuehren(fbs_liste):
         for rightborder in [0,1]:
             for topborder in [0,1]:
                 for bottomborder in [0,1]:
+                    logger.info(str(leftborder) + str(rightborder) + str(topborder) + str(bottomborder))
                     with futures.ThreadPoolExecutor(max_workers=8) as e:
                         threads = {e.submit(phase1, fb, leftborder,rightborder,topborder,bottomborder): fb for fb in fbs_liste}
                         for thread in futures.as_completed(threads):
@@ -105,12 +107,16 @@ def phase1_durchfuehren(fbs_liste):
                             if fb_data[0]=='help':
                                 fbs_nacharbeiten_liste.append(fb_data[1])
                             elif fb_data[0]=='unknown':
-                                fbs_unbekannt_liste.append(fb_data[1])
+                                fbs_unbekannt_liste.append(fb_data)
                             elif fb_data[0]!='empty':
-                                fbs_bekannt_liste.append(fb_data[1])
+                                fbs_bekannt_liste.append(fb_data)
                             else:
                                 logger.info("Hier war etwas komisch")
+                    fbs_liste = fbs_nacharbeiten_liste
+                    fbs_nacharbeiten_liste = []
 
+    fbs_nacharbeiten_liste = fbs_liste
+    logger.info("Die Phase 1 ist abgeschlossen.")
     # fbs_nacharbeiten_liste durcharbeiten
     anzahl = len(fbs_nacharbeiten_liste)
     for fb in fbs_nacharbeiten_liste:
@@ -163,7 +169,7 @@ def phase1_durchfuehren(fbs_liste):
         else:
             fbs_nacharbeiten_liste.append(fb[1:])
 
-
+    logger.info("Phase 2 wird beendet")
     anzahl = len(fbs_nacharbeiten_liste)
     for fb in fbs_nacharbeiten_liste:
         erg = phase2M(fb, anzahl)
@@ -172,6 +178,7 @@ def phase1_durchfuehren(fbs_liste):
             fbs_bekannt_liste.append(erg)
 
 
+    logger.info("Phase2M wird beendet")
     fbs_fertig_liste = []
 
     # TODO was ist der Unterschied zwischen fb und fragebogen?
@@ -207,3 +214,5 @@ def daten_speichern(fbs_fertig_liste:list):
     file.close()
     logger.info("Die Speicherung ist beendet")
 
+if __name__ == "__main__":
+    print("wurde ausgeführt")

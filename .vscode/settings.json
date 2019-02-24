@@ -1,7 +1,11 @@
 {
     "cSpell.words": [
         "adduser",
+        "linalg",
+        "numpy",
+        "tkinter",
         "vboxsf",
         "xchange"
-    ]
+    ],
+    "python.pythonPath": ".env\\Scripts\\python.exe"
 }

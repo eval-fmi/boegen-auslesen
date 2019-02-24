@@ -1,16 +1,24 @@
-from evalFuns import *
 import sys
 from PIL import Image, ImageDraw, ImageFilter, ImageTk
 import numpy as np
 from numpy import linalg as LA
 import subprocess 
-from tkinter import *
+from tkinter import Label, Button, Canvas, StringVar, Tk, X, RIGHT, LEFT
 import Levenshtein
 
+from .evalFuns import findTop, findBottom, findLeft, findRight
+from .evalFuns import findRedTop, findRedBottom, findRedLeft, findRedRight
+from .evalFuns import shakeDown, shakeLeft, shakeRight, shakeUp, shakeUp
+from .evalFuns import shakeDownRGB, shakeLeftRGB, shakeRightRGB, shakeUpRGB, shakeUpRGB
+from .evalFuns import searchBlack, searchRGBBlack
+from .evalFuns import findBottom, findLeft, findRight, findTop
+from .evalFuns import findRedBottom, findRedLeft, findRedRight, findRedTop
+from .evalFuns import item, paintItem
 
 
 def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     Fragebogen = Image.open(Questionnaire)
+    
     a,b = Fragebogen.size
 
     Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
@@ -217,12 +225,12 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     box = (Left[0],int(Top[1]+(Left[1]-Top[1])/2.7),Top[0],int(Left[1]-(Left[1]-Top[1])/1.7))
     if(box[0]>=box[2] or box[1]>=box[3]):
         return ["help",Questionnaire]
-    Fragebogen.crop(box).save(Questionnaire+".crop", "PNG",optimize=True)
+    Fragebogen.crop(box).save(Questionnaire + ".crop", "PNG",optimize=True)
     # Texterkennung tesseract wird auf Datei.crop angewendet mit Sprache Deutsch und Ergebnis an stdout geschickt
     s_deu=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l deu'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
     s_eng=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l eng'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
 
-    Fragebogen.save(Questionnaire+".processed", "PNG",optimize=True)
+    Fragebogen.save(Questionnaire + ".processed", "PNG",optimize=True)
 
     questions = []
     typ = ""
@@ -271,8 +279,9 @@ def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen 
 
         message = "Drehe bitte manuell den Fragebogen in die korrekte Position (noch "+str(anzahl)+")."
 
+        Label
         label = Label(window,text=message)
-        label.pack(fill=X)
+        label.pack()
 
         canvas = Canvas(window, width=image.size[0], height=image.size[1])
         canvas.pack()

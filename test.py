@@ -9,7 +9,6 @@ logger = logging.getLogger()
 logger.addHandler(logging.StreamHandler())
 
 import auslesen.readOutQuestionaires as readOutQuestionaires
-import auslesen.readOutQuestionaires_old as readOutQuestionaires_old
 
 class AuslesenTest (unittest.TestCase):
 
@@ -20,7 +19,6 @@ class AuslesenTest (unittest.TestCase):
         test_ordner = root.parent /'test_Boegen'
         return test_ordner
         
-
     def test_frageboegen_lesen(self):
 
         testordner = self.test_testordner()

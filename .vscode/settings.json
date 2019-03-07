@@ -1,11 +1,14 @@
 {
     "cSpell.words": [
         "adduser",
+        "boegen",
         "linalg",
         "numpy",
         "tkinter",
         "vboxsf",
         "xchange"
     ],
-    "python.pythonPath": ".env\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Python36\\python.exe",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

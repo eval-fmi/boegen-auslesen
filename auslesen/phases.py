@@ -6,261 +6,262 @@ import subprocess
 from tkinter import Label, Button, Canvas, StringVar, Tk, X, RIGHT, LEFT
 import Levenshtein
 
-from .evalFuns import findTop, findBottom, findLeft, findRight
+from .evalFuns import oberer_punkt, unterer_punkt, linker_punkt, rechter_punkt
 from .evalFuns import findRedTop, findRedBottom, findRedLeft, findRedRight
 from .evalFuns import shakeDown, shakeLeft, shakeRight, shakeUp, shakeUp
 from .evalFuns import shakeDownRGB, shakeLeftRGB, shakeRightRGB, shakeUpRGB, shakeUpRGB
 from .evalFuns import searchBlack, searchRGBBlack
-from .evalFuns import findBottom, findLeft, findRight, findTop
+from .evalFuns import unterer_punkt, linker_punkt, rechter_punkt, oberer_punkt
 from .evalFuns import findRedBottom, findRedLeft, findRedRight, findRedTop
 from .evalFuns import item, paintItem
 
 
-def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
-    Fragebogen = Image.open(Questionnaire)
+# wurde in boegen_vorbereiten übernommen
+# def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
+#     Fragebogen = Image.open(Questionnaire)
     
-    a,b = Fragebogen.size
+#     a,b = Fragebogen.size
 
-    Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
-    FragebogenGefiltert=Fragebogen.filter(ImageFilter.MedianFilter(5))         
-    FB = FragebogenGefiltert.load()
+#     Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
+#     FragebogenGefiltert=Fragebogen.filter(ImageFilter.MedianFilter(5))         
+#     FB = FragebogenGefiltert.load()
 
-    sum = 0
-    stepx=5
-    stepy=10
+#     sum = 0
+#     stepx=5
+#     stepy=10
 
-    for i in range(0,a,stepx):
-        for j in range (0,b,stepy):
-            sum += FB[i,j]
+#     for i in range(0,a,stepx):
+#         for j in range (0,b,stepy):
+#             sum += FB[i,j]
 
-    if sum*stepx*stepy/(a*b)>252:
-        sum=0
-        for i in range(0,a):
-            for j in range (0,b):
-                sum += FB[i,j]
-        if sum/(a*b)>254:
-            return ["empty"]
+#     if sum*stepx*stepy/(a*b)>252:
+#         sum=0
+#         for i in range(0,a):
+#             for j in range (0,b):
+#                 sum += FB[i,j]
+#         if sum/(a*b)>254:
+#             return ["empty"]
 
-    Top=shakeRight(FB,a,b,shakeDown(FB,a,b,findTop(FB,a,b,topborder)))
-    Bottom=shakeRight(FB,a,b,shakeUp(FB,a,b,findBottom(FB,a,b,bottomborder)))
-    Left=shakeDown(FB,a,b,shakeRight(FB,a,b,findLeft(FB,a,b,leftborder)))
-    Right=shakeDown(FB,a,b,shakeLeft(FB,a,b,findRight(FB,a,b,rightborder)))
+#     Top=shakeRight(FB,a,b,shakeDown(FB,a,b,oberer_punkt(FB,a,b,topborder)))
+#     Bottom=shakeRight(FB,a,b,shakeUp(FB,a,b,unterer_punkt(FB,a,b,bottomborder)))
+#     Left=shakeDown(FB,a,b,shakeRight(FB,a,b,linker_punkt(FB,a,b,leftborder)))
+#     Right=shakeDown(FB,a,b,shakeLeft(FB,a,b,rechter_punkt(FB,a,b,rightborder)))
 
-    TopA=np.array(Top)
-    BottomA=np.array(Bottom)
-    LeftA=np.array(Left)
-    RightA=np.array(Right)
+#     TopA=np.array(Top)
+#     BottomA=np.array(Bottom)
+#     LeftA=np.array(Left)
+#     RightA=np.array(Right)
     
-    TB=BottomA-TopA
-    TL=LeftA-TopA
-    TR=RightA-TopA
+#     TB=BottomA-TopA
+#     TL=LeftA-TopA
+#     TR=RightA-TopA
     
-    LB=BottomA-LeftA
-    LR=RightA-LeftA
-    LT=TopA-LeftA
+#     LB=BottomA-LeftA
+#     LR=RightA-LeftA
+#     LT=TopA-LeftA
     
-    BT=TopA-BottomA
-    BL=LeftA-BottomA
-    BR=RightA-BottomA
+#     BT=TopA-BottomA
+#     BL=LeftA-BottomA
+#     BR=RightA-BottomA
     
-    RB=BottomA-RightA
-    RL=LeftA-RightA
-    RT=TopA-RightA
+#     RB=BottomA-RightA
+#     RL=LeftA-RightA
+#     RT=TopA-RightA
     
-    cosTLB = np.dot(LT,LB)/LA.norm(LT)/LA.norm(LB)
-    cosRTL = np.dot(TL,TR)/LA.norm(TL)/LA.norm(TR)
-    cosBRT = np.dot(RB,RT)/LA.norm(RB)/LA.norm(RT)
-    cosLBR = np.dot(BL,BR)/LA.norm(BL)/LA.norm(BR)
-    cosRL_BT = np.dot(BT,RL)/LA.norm(BT)/LA.norm(RL)
+#     cosTLB = np.dot(LT,LB)/LA.norm(LT)/LA.norm(LB)
+#     cosRTL = np.dot(TL,TR)/LA.norm(TL)/LA.norm(TR)
+#     cosBRT = np.dot(RB,RT)/LA.norm(RB)/LA.norm(RT)
+#     cosLBR = np.dot(BL,BR)/LA.norm(BL)/LA.norm(BR)
+#     cosRL_BT = np.dot(BT,RL)/LA.norm(BT)/LA.norm(RL)
     
-    winkelTLB = np.arccos(cosTLB)*360 / 2 / np.pi 
-    winkelRTL = np.arccos(cosRTL)*360 / 2 / np.pi 
-    winkelBRT = np.arccos(cosBRT)*360 / 2 / np.pi
-    winkelLBR = np.arccos(cosLBR)*360 / 2 / np.pi
-    winkelRL_BT = np.arccos(cosRL_BT)*360 / 2 / np.pi
+#     winkelTLB = np.arccos(cosTLB)*360 / 2 / np.pi 
+#     winkelRTL = np.arccos(cosRTL)*360 / 2 / np.pi 
+#     winkelBRT = np.arccos(cosBRT)*360 / 2 / np.pi
+#     winkelLBR = np.arccos(cosLBR)*360 / 2 / np.pi
+#     winkelRL_BT = np.arccos(cosRL_BT)*360 / 2 / np.pi
 
-    if(abs(winkelRL_BT-90)>1): # gefundene Mittelstriche bilden kein Orthogonales Kreuz
-        if(abs(winkelTLB-69.5)<1): # Nehmen an Top, Left und Bottom richtig
-            RightA = LeftA+LT+LB
-            Right = RightA.tolist()
-        elif(abs(winkelBRT-69.5)<1): # Nehmen an Top, Right und Bottom richtig
-            LeftA = RightA+RT+RB
-            Left = LeftA.tolist()
-        elif(abs(winkelRTL-110.5)<1): # Nehmen an Right, Top, Left richtig
-            BottomA = TopA+TR+TL
-            Bottom = BottomA.tolist()
-        elif(abs(winkelLBR-110.5)<1): # Nehmen an Left, Bottom, Right richtig
-            TopA = BottomA+BR+BL
-            Top = TopA.tolist()
-        else: 
-            return ["help",Questionnaire]
+#     if(abs(winkelRL_BT-90)>1): # gefundene Mittelstriche bilden kein Orthogonales Kreuz
+#         if(abs(winkelTLB-69.5)<1): # Nehmen an Top, Left und Bottom richtig
+#             RightA = LeftA+LT+LB
+#             Right = RightA.tolist()
+#         elif(abs(winkelBRT-69.5)<1): # Nehmen an Top, Right und Bottom richtig
+#             LeftA = RightA+RT+RB
+#             Left = LeftA.tolist()
+#         elif(abs(winkelRTL-110.5)<1): # Nehmen an Right, Top, Left richtig
+#             BottomA = TopA+TR+TL
+#             Bottom = BottomA.tolist()
+#         elif(abs(winkelLBR-110.5)<1): # Nehmen an Left, Bottom, Right richtig
+#             TopA = BottomA+BR+BL
+#             Top = TopA.tolist()
+#         else: 
+#             return ["help",Questionnaire]
     
-    if (Top[1]<0 or Bottom[1]>=b or Left[0]<0 or Right[0]>=a):
-        return ["help",Questionnaire]
+#     if (Top[1]<0 or Bottom[1]>=b or Left[0]<0 or Right[0]>=a):
+#         return ["help",Questionnaire]
     
-    LR=RightA-LeftA
+#     LR=RightA-LeftA
 
-    e1=np.array((1,0))
+#     e1=np.array((1,0))
 
-    cosalpha = np.dot(LR,e1)/LA.norm(LR)/LA.norm(e1)
-    alpha=np.arccos(cosalpha)*360 / 2 / np.pi
+#     cosalpha = np.dot(LR,e1)/LA.norm(LR)/LA.norm(e1)
+#     alpha=np.arccos(cosalpha)*360 / 2 / np.pi
 
-    Fragebogen = Fragebogen.convert('RGBA')
-    FB = Fragebogen.load()
-    FB[Top[0]-1,Top[1]]=(255,0,0,255)
-    FB[Top[0],Top[1]]=(255,0,0,255)
-    FB[Top[0]-1,Top[1]+1]=(255,0,0,255)
-    FB[Top[0],Top[1]+1]=(255,0,0,255)
-    FB[Bottom[0]-1,Bottom[1]]=(255,0,0,255)
-    FB[Bottom[0],Bottom[1]]=(255,0,0,255)
-    FB[Bottom[0]-1,Bottom[1]-1]=(255,0,0,255)
-    FB[Bottom[0],Bottom[1]-1]=(255,0,0,255)
-    FB[Left[0],Left[1]-1]=(255,0,0,255)
-    FB[Left[0],Left[1]]=(255,0,0,255)
-    FB[Left[0]+1,Left[1]-1]=(255,0,0,255)
-    FB[Left[0]+1,Left[1]]=(255,0,0,255)
-    FB[Right[0],Right[1]-1]=(255,0,0,255)
-    FB[Right[0],Right[1]]=(255,0,0,255)
-    FB[Right[0]-1,Right[1]-1]=(255,0,0,255)
-    FB[Right[0]-1,Right[1]]=(255,0,0,255)
+#     Fragebogen = Fragebogen.convert('RGBA')
+#     FB = Fragebogen.load()
+#     FB[Top[0]-1,Top[1]]=(255,0,0,255)
+#     FB[Top[0],Top[1]]=(255,0,0,255)
+#     FB[Top[0]-1,Top[1]+1]=(255,0,0,255)
+#     FB[Top[0],Top[1]+1]=(255,0,0,255)
+#     FB[Bottom[0]-1,Bottom[1]]=(255,0,0,255)
+#     FB[Bottom[0],Bottom[1]]=(255,0,0,255)
+#     FB[Bottom[0]-1,Bottom[1]-1]=(255,0,0,255)
+#     FB[Bottom[0],Bottom[1]-1]=(255,0,0,255)
+#     FB[Left[0],Left[1]-1]=(255,0,0,255)
+#     FB[Left[0],Left[1]]=(255,0,0,255)
+#     FB[Left[0]+1,Left[1]-1]=(255,0,0,255)
+#     FB[Left[0]+1,Left[1]]=(255,0,0,255)
+#     FB[Right[0],Right[1]-1]=(255,0,0,255)
+#     FB[Right[0],Right[1]]=(255,0,0,255)
+#     FB[Right[0]-1,Right[1]-1]=(255,0,0,255)
+#     FB[Right[0]-1,Right[1]]=(255,0,0,255)
 
-    rot=Fragebogen.rotate(alpha if Right[1]>Left[1] else -alpha, expand=1) 
-    fff=Image.new('RGBA',rot.size,(255,)*4)
-    Fragebogen=Image.composite(rot,fff,rot)
+#     rot=Fragebogen.rotate(alpha if Right[1]>Left[1] else -alpha, expand=1) 
+#     fff=Image.new('RGBA',rot.size,(255,)*4)
+#     Fragebogen=Image.composite(rot,fff,rot)
     
-    a,b=Fragebogen.size
-    FB=Fragebogen.load()
+#     a,b=Fragebogen.size
+#     FB=Fragebogen.load()
 
-    Top = shakeRightRGB(FB,a,b,shakeDownRGB(FB,a,b,findRedTop(FB,a,b)))
-    Bottom = shakeRightRGB(FB,a,b,shakeUpRGB(FB,a,b,findRedBottom(FB,a,b)))
-    Left = shakeDownRGB(FB,a,b,shakeRightRGB(FB,a,b,findRedLeft(FB,a,b)))
-    Right = shakeDownRGB(FB,a,b,shakeLeftRGB(FB,a,b,findRedRight(FB,a,b)))
+#     Top = shakeRightRGB(FB,a,b,shakeDownRGB(FB,a,b,findRedTop(FB,a,b)))
+#     Bottom = shakeRightRGB(FB,a,b,shakeUpRGB(FB,a,b,findRedBottom(FB,a,b)))
+#     Left = shakeDownRGB(FB,a,b,shakeRightRGB(FB,a,b,findRedLeft(FB,a,b)))
+#     Right = shakeDownRGB(FB,a,b,shakeLeftRGB(FB,a,b,findRedRight(FB,a,b)))
 
-    TopLeft = (Left[0]+(Top[0]-Bottom[0])//2,Top[1]+(Left[1]-Right[1])//2)
-    TopRight = (Right[0]+(Top[0]-Bottom[0])//2,Top[1]-(Left[1]-Right[1])//2)
-    BottomLeft = (Left[0]-(Top[0]-Bottom[0])//2,Bottom[1]+(Left[1]-Right[1])//2)
-    BottomRight = (Right[0]-(Top[0]-Bottom[0])//2,Bottom[1]-(Left[1]-Right[1])//2)
+#     TopLeft = (Left[0]+(Top[0]-Bottom[0])//2,Top[1]+(Left[1]-Right[1])//2)
+#     TopRight = (Right[0]+(Top[0]-Bottom[0])//2,Top[1]-(Left[1]-Right[1])//2)
+#     BottomLeft = (Left[0]-(Top[0]-Bottom[0])//2,Bottom[1]+(Left[1]-Right[1])//2)
+#     BottomRight = (Right[0]-(Top[0]-Bottom[0])//2,Bottom[1]-(Left[1]-Right[1])//2)
 
-    if Top[0]<Bottom[0]: # linksneigung
-        TopLeft = shakeLeftRGB(FB,a,b,shakeUpRGB(FB,a,b,searchRGBBlack(FB,a,b,TopLeft,40)))
-        TopRight = shakeUpRGB(FB,a,b,shakeRightRGB(FB,a,b,searchRGBBlack(FB,a,b,TopRight,40)))
-        BottomLeft = shakeDownRGB(FB,a,b,shakeLeftRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomLeft,40)))
-        BottomRight = shakeRightRGB(FB,a,b,shakeDownRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomRight,40)))
-    else: # rechtsneigung
-        TopLeft = shakeUpRGB(FB,a,b,shakeLeftRGB(FB,a,b,searchRGBBlack(FB,a,b,TopLeft,40)))
-        TopRight = shakeRightRGB(FB,a,b,shakeUpRGB(FB,a,b,searchRGBBlack(FB,a,b,TopRight,40)))
-        BottomLeft = shakeLeftRGB(FB,a,b,shakeDownRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomLeft,40)))
-        BottomRight = shakeDownRGB(FB,a,b,shakeRightRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomRight,40)))
+#     if Top[0]<Bottom[0]: # linksneigung
+#         TopLeft = shakeLeftRGB(FB,a,b,shakeUpRGB(FB,a,b,searchRGBBlack(FB,a,b,TopLeft,40)))
+#         TopRight = shakeUpRGB(FB,a,b,shakeRightRGB(FB,a,b,searchRGBBlack(FB,a,b,TopRight,40)))
+#         BottomLeft = shakeDownRGB(FB,a,b,shakeLeftRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomLeft,40)))
+#         BottomRight = shakeRightRGB(FB,a,b,shakeDownRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomRight,40)))
+#     else: # rechtsneigung
+#         TopLeft = shakeUpRGB(FB,a,b,shakeLeftRGB(FB,a,b,searchRGBBlack(FB,a,b,TopLeft,40)))
+#         TopRight = shakeRightRGB(FB,a,b,shakeUpRGB(FB,a,b,searchRGBBlack(FB,a,b,TopRight,40)))
+#         BottomLeft = shakeLeftRGB(FB,a,b,shakeDownRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomLeft,40)))
+#         BottomRight = shakeDownRGB(FB,a,b,shakeRightRGB(FB,a,b,searchRGBBlack(FB,a,b,BottomRight,40)))
 
-    if 0<=TopLeft[0]<a and 0<=TopLeft[1]<b:
-        lenTL = shakeDownRGB(FB,a,b,TopLeft)[1]-TopLeft[1]
-    else: 
-        lenTL = 0
+#     if 0<=TopLeft[0]<a and 0<=TopLeft[1]<b:
+#         lenTL = shakeDownRGB(FB,a,b,TopLeft)[1]-TopLeft[1]
+#     else: 
+#         lenTL = 0
 
-    if 0<=TopRight[0]<a and 0<=TopRight[1]<b:
-        lenTR = shakeDownRGB(FB,a,b,TopRight)[1]-TopRight[1] 
-    else:
-        lenTR=0
+#     if 0<=TopRight[0]<a and 0<=TopRight[1]<b:
+#         lenTR = shakeDownRGB(FB,a,b,TopRight)[1]-TopRight[1] 
+#     else:
+#         lenTR=0
 
-    if 0<=BottomLeft[0]<a and 0<=BottomLeft[1]<b:  
-        lenBL = BottomLeft[1]-shakeUpRGB(FB,a,b,BottomLeft)[1]
-    else:
-        lenBL = 0
+#     if 0<=BottomLeft[0]<a and 0<=BottomLeft[1]<b:  
+#         lenBL = BottomLeft[1]-shakeUpRGB(FB,a,b,BottomLeft)[1]
+#     else:
+#         lenBL = 0
 
-    if 0<=BottomRight[0]<a and 0<=BottomRight[1]<b:
-        lenBR = BottomRight[1]-shakeUpRGB(FB,a,b,BottomRight)[1]
-    else:
-        lenBR = 0
+#     if 0<=BottomRight[0]<a and 0<=BottomRight[1]<b:
+#         lenBR = BottomRight[1]-shakeUpRGB(FB,a,b,BottomRight)[1]
+#     else:
+#         lenBR = 0
 
-    corners = {lenTL : TopLeft, lenTR : TopRight, lenBL : BottomLeft, lenBR : BottomRight}
-    m=max(lenTL,lenTR,lenBL,lenBR)
-    M=set([lenTL,lenTR,lenBL,lenBR])
+#     corners = {lenTL : TopLeft, lenTR : TopRight, lenBL : BottomLeft, lenBR : BottomRight}
+#     m=max(lenTL,lenTR,lenBL,lenBR)
+#     M=set([lenTL,lenTR,lenBL,lenBR])
 
-    M.remove(m)
-    FoundMax=True
+#     M.remove(m)
+#     FoundMax=True
     
-    if(len(M)==0):
-        FoundMax=False
-    else:
-        for i in M:
-            if i*1.5>=m:
-                FoundMax=False
+#     if(len(M)==0):
+#         FoundMax=False
+#     else:
+#         for i in M:
+#             if i*1.5>=m:
+#                 FoundMax=False
 
-    if not FoundMax:
-        return ["help",Questionnaire]
+#     if not FoundMax:
+#         return ["help",Questionnaire]
     
-    RightLowerCorner = corners[max(lenTL,lenTR,lenBL,lenBR)]
+#     RightLowerCorner = corners[max(lenTL,lenTR,lenBL,lenBR)]
 
-    if(RightLowerCorner==TopLeft):
-        Fragebogen=Fragebogen.rotate(180, expand=1)
-        Top=(a-1-Top[0],b-1-Top[1])
-        Bottom=(a-1-Bottom[0],b-1-Bottom[1])
-        Left=(a-1-Left[0],b-1-Left[1])
-        Right=(a-1-Right[0],b-1-Right[1])
-        Top, Bottom, Left, Right = Bottom, Top, Right, Left
-    elif (RightLowerCorner==TopRight):
-        Fragebogen=Fragebogen.rotate(270, expand=1)
-        Top=(b-1-Top[1],Top[0])
-        Bottom=(b-1-Bottom[1],Bottom[0])
-        Left=(b-1-Left[1],Left[0])
-        Right=(b-1-Right[1],Right[0])
-        Top, Bottom, Left, Right = Left, Right, Bottom, Top
-        a,b = b,a
-    elif (RightLowerCorner==BottomLeft):
-        Fragebogen=Fragebogen.rotate(90, expand=1)
-        Top=(Top[1],a-1-Top[0])
-        Bottom=(Bottom[1],a-1-Bottom[0])
-        Left=(Left[1],a-1-Left[0])
-        Right=(Right[1],a-1-Right[0])
-        Top, Bottom, Left, Right = Right, Left, Top, Bottom
-        a,b = b,a
+#     if(RightLowerCorner==TopLeft):
+#         Fragebogen=Fragebogen.rotate(180, expand=1)
+#         Top=(a-1-Top[0],b-1-Top[1])
+#         Bottom=(a-1-Bottom[0],b-1-Bottom[1])
+#         Left=(a-1-Left[0],b-1-Left[1])
+#         Right=(a-1-Right[0],b-1-Right[1])
+#         Top, Bottom, Left, Right = Bottom, Top, Right, Left
+#     elif (RightLowerCorner==TopRight):
+#         Fragebogen=Fragebogen.rotate(270, expand=1)
+#         Top=(b-1-Top[1],Top[0])
+#         Bottom=(b-1-Bottom[1],Bottom[0])
+#         Left=(b-1-Left[1],Left[0])
+#         Right=(b-1-Right[1],Right[0])
+#         Top, Bottom, Left, Right = Left, Right, Bottom, Top
+#         a,b = b,a
+#     elif (RightLowerCorner==BottomLeft):
+#         Fragebogen=Fragebogen.rotate(90, expand=1)
+#         Top=(Top[1],a-1-Top[0])
+#         Bottom=(Bottom[1],a-1-Bottom[0])
+#         Left=(Left[1],a-1-Left[0])
+#         Right=(Right[1],a-1-Right[0])
+#         Top, Bottom, Left, Right = Right, Left, Top, Bottom
+#         a,b = b,a
 
-    FB = Fragebogen.load()
+#     FB = Fragebogen.load()
 
-    height=.01*(Bottom[1]-Top[1])
-    width=.01*(Right[0]-Left[0])
+#     height=.01*(Bottom[1]-Top[1])
+#     width=.01*(Right[0]-Left[0])
 
-    origin = np.array((Left[0],Top[1]))
+#     origin = np.array((Left[0],Top[1]))
     
-    box = (Left[0],int(Top[1]+(Left[1]-Top[1])/2.7),Top[0],int(Left[1]-(Left[1]-Top[1])/1.7))
-    if(box[0]>=box[2] or box[1]>=box[3]):
-        return ["help",Questionnaire]
-    Fragebogen.crop(box).save(Questionnaire + ".crop", "PNG",optimize=True)
-    # Texterkennung tesseract wird auf Datei.crop angewendet mit Sprache Deutsch und Ergebnis an stdout geschickt
-    s_deu=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l deu'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
-    s_eng=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l eng'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
+#     box = (Left[0],int(Top[1]+(Left[1]-Top[1])/2.7),Top[0],int(Left[1]-(Left[1]-Top[1])/1.7))
+#     if(box[0]>=box[2] or box[1]>=box[3]):
+#         return ["help",Questionnaire]
+#     Fragebogen.crop(box).save(Questionnaire + ".crop", "PNG",optimize=True)
+#     # Texterkennung tesseract wird auf Datei.crop angewendet mit Sprache Deutsch und Ergebnis an stdout geschickt
+#     s_deu=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l deu'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
+#     s_eng=subprocess.Popen(['tesseract '+Questionnaire+".crop"+' stdout -l eng'],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode("utf-8") 
 
-    Fragebogen.save(Questionnaire + ".processed", "PNG",optimize=True)
+#     Fragebogen.save(Questionnaire + ".processed", "PNG",optimize=True)
 
-    questions = []
-    typ = ""
+#     questions = []
+#     typ = ""
 
-    for word in s_deu.split():
-        if Levenshtein.distance(word,'Vorlesungen') < 5:
-            typ = "Vorlesung1"
-            break
-        elif not Levenshtein.distance(word,'Fragebogen')<5 and (Levenshtein.distance(word,'Wurde')<3 or Levenshtein.distance(word,'Übungstermin')<5 or Levenshtein.distance(word,'angeboten?')<5):
-            typ = "Vorlesung2"
-            break
-        elif Levenshtein.distance(word,'Seminare')<5 or Levenshtein.distance(word,'Praktika')<5:
-            typ = "Seminar"
-            break
+#     for word in s_deu.split():
+#         if Levenshtein.distance(word,'Vorlesungen') < 5:
+#             typ = "Vorlesung1"
+#             break
+#         elif not Levenshtein.distance(word,'Fragebogen')<5 and (Levenshtein.distance(word,'Wurde')<3 or Levenshtein.distance(word,'Übungstermin')<5 or Levenshtein.distance(word,'angeboten?')<5):
+#             typ = "Vorlesung2"
+#             break
+#         elif Levenshtein.distance(word,'Seminare')<5 or Levenshtein.distance(word,'Praktika')<5:
+#             typ = "Seminar"
+#             break
 
-    for word in s_eng.split():
-        if Levenshtein.distance(word,'lectures')<5:
-            typ = "Vorlesung1"
-            break
-        elif not Levenshtein.distance(word,'questionnaire')<5 and (Levenshtein.distance(word,'exercise')<5 or Levenshtein.distance(word,'meetings')<3 or Levenshtein.distance(word,'belonging')<5):
-            typ = "Vorlesung2"
-            break
-        elif Levenshtein.distance(word,'seminars')<5 or Levenshtein.distance(word,'practical')<5:
-            typ = "Seminar"
-            break
+#     for word in s_eng.split():
+#         if Levenshtein.distance(word,'lectures')<5:
+#             typ = "Vorlesung1"
+#             break
+#         elif not Levenshtein.distance(word,'questionnaire')<5 and (Levenshtein.distance(word,'exercise')<5 or Levenshtein.distance(word,'meetings')<3 or Levenshtein.distance(word,'belonging')<5):
+#             typ = "Vorlesung2"
+#             break
+#         elif Levenshtein.distance(word,'seminars')<5 or Levenshtein.distance(word,'practical')<5:
+#             typ = "Seminar"
+#             break
 
-    if typ=="":
-        return ["help",Questionnaire]
+#     if typ=="":
+#         return ["help",Questionnaire]
 
-    return [typ,Questionnaire+".processed",origin,width,height]
+#     return [typ,Questionnaire+".processed",origin,width,height]
 
 def phase1M(Questionnaire,anzahl): # laesst den Benutzer manuell den Fragebogen drehen und Ecken markieren
     gedreht = False

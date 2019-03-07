@@ -9,8 +9,9 @@ logger = logging.getLogger()
 logger.addHandler(logging.StreamHandler())
 
 import auslesen.readOutQuestionaires as readOutQuestionaires
+import auslesen.boegen_vorbereiten as vorbereiten
 
-class AuslesenTest (unittest.TestCase):
+class AuslesenTest(unittest.TestCase):
 
     def test_testordner(self):
 
@@ -29,6 +30,13 @@ class AuslesenTest (unittest.TestCase):
         print("phase1 durchgeführt")
         readOutQuestionaires.daten_speichern(fbs_fertig_liste)
         print("alle daten gespeichert")
+    
+class BoegenVorbereiten(unittest.TestCase):
+    """ testet alle Funktionen, die den Bogen vorbereiten, bevor er ausgewertet
+        werden kann. """ 
+
+    def test_filter(self):
+        """testet, wie die filter sich auf einen Bogen auswerten"""
 
 if __name__ == '__main__':
     unittest.main()

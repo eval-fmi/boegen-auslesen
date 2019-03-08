@@ -4,11 +4,23 @@
         "boegen",
         "linalg",
         "numpy",
+        "pytesseract",
+        "tesseract",
         "tkinter",
         "vboxsf",
         "xchange"
     ],
-    "python.pythonPath": "C:\\Python36\\python.exe",
+    "python.pythonPath": ".env\\Scripts\\python.exe",
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        ".",
+        "-p",
+        "test*.py"
+    ],
+    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.unittestEnabled": true
 }

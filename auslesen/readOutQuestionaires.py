@@ -51,8 +51,8 @@ import tkinter
 from concurrent import futures
 
 # TODO kann ich das rausnehmen?
-from .boegen_vorbereiten import phase1
-from .phases import phase1M, phase2, phase2M
+from auslesen.boegen_vorbereiten import phase1
+from auslesen.phases import phase1M, phase2, phase2M
 
 logging.basicConfig(filename=f'{(__file__)[:-3]}.log', level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s', datefmt = "%H:%M-%x")
 logger = logging.getLogger()

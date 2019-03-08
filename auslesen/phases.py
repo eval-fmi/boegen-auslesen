@@ -4,15 +4,14 @@ import numpy as np
 from numpy import linalg as LA
 import subprocess 
 from tkinter import Label, Button, Canvas, StringVar, Tk, X, RIGHT, LEFT
-import Levenshtein
 
-from .evalFuns import oberer_punkt, unterer_punkt, linker_punkt, rechter_punkt
-from .evalFuns import findRedTop, findRedBottom, findRedLeft, findRedRight
-from .evalFuns import shakeDown, shakeLeft, shakeRight, shakeUp, shakeUp
-from .evalFuns import shakeDownRGB, shakeLeftRGB, shakeRightRGB, shakeUpRGB, shakeUpRGB
-from .evalFuns import searchBlack, searchRGBBlack
-from .evalFuns import unterer_punkt, linker_punkt, rechter_punkt, oberer_punkt
-from .evalFuns import findRedBottom, findRedLeft, findRedRight, findRedTop
+from .boegen_vorbereiten import oberer_punkt, unterer_punkt, linker_punkt, rechter_punkt
+from .boegen_vorbereiten import findRedTop, findRedBottom, findRedLeft, findRedRight
+from .boegen_vorbereiten import shakeDown, shakeLeft, shakeRight, shakeUp, shakeUp
+from .boegen_vorbereiten import shakeDownRGB, shakeLeftRGB, shakeRightRGB, shakeUpRGB, shakeUpRGB
+from .boegen_vorbereiten import searchBlack, searchRGBBlack
+from .boegen_vorbereiten import unterer_punkt, linker_punkt, rechter_punkt, oberer_punkt
+from .boegen_vorbereiten import findRedBottom, findRedLeft, findRedRight, findRedTop
 from .evalFuns import item, paintItem
 
 

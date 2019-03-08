@@ -1,23 +1,23 @@
 import numpy as np
 
-def minimum_edit_distance(s1, s2):
-    """ berechnet die Levenshteindistanz zwischen den beiden Strings s1 und s2 """
-    if len(s1) > len(s2):
-        s1, s2 = s2, s1
-    distanzen = range(len(s1) + 1)
-    for index2, char2 in enumerate(s2):
-        neue_distanzen = [index2+1]
-        for index1, char1 in enumerate(s1):
-            if char1 == char2:
-                neue_distanzen.append(distanzen[index1])
-            else:
-                neue_distanzen.append(1 + min((distanzen[index1],
-                                             distanzen[index1+1],
-                                             neue_distanzen[-1])))
-        distanzen = neue_distanzen
-    return distanzen[-1]
-
 # wird in boegen_vorbereiten übernommen
+# --------------------------------------
+# def minimum_edit_distance(s1, s2):
+#     """ berechnet die Levenshteindistanz zwischen den beiden Strings s1 und s2 """
+#     if len(s1) > len(s2):
+#         s1, s2 = s2, s1
+#     distanzen = range(len(s1) + 1)
+#     for index2, char2 in enumerate(s2):
+#         neue_distanzen = [index2+1]
+#         for index1, char1 in enumerate(s1):
+#             if char1 == char2:
+#                 neue_distanzen.append(distanzen[index1])
+#             else:
+#                 neue_distanzen.append(1 + min((distanzen[index1],
+#                                              distanzen[index1+1],
+#                                              neue_distanzen[-1])))
+#         distanzen = neue_distanzen
+#     return distanzen[-1]
 
 # def ist_schwarz(x):
 #     """x ist gibt True zurück, wenn """

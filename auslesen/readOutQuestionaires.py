@@ -35,167 +35,188 @@
 #
 # Benötigte Programme: Python3 (+übliche Pakete wie numpy), ImageMagick, Tesseract, Levenshtein
 #
-#
+# Folgende Abkürzungen werden verwendet:
+# fb: Fragebogen
+# fbs:  Fragebögen
+# vl:  Vorlesung
+# vls: Vorlesungen
 
 
 import sys
-import numpy as np
-from numpy import linalg as LA
-from subprocess import call
 import os
-import tkinter
-from phases import *
+from subprocess import call
+import logging
 import multiprocessing
+import tkinter
 from concurrent import futures
 
-argv=sys.argv
+# TODO kann ich das rausnehmen?
+from auslesen.boegen_vorbereiten import phase1
+from auslesen.phases import phase1M, phase2, phase2M
 
-if len(argv)<2:
-    sys.exit('Fehlendes Argument.')
-elif not os.path.isdir(argv[1]):
-    sys.exit(argv[1]+" ist kein Verzeichnis.")
-
-if(argv[1][-1]!="/"):
-    argv[1] += "/"
-
-sys.stdout.write("Fortschritt: 0.00%")
-toDo = []
-VLs = list(os.listdir(argv[1]))
-print(len(VLs))
-VLs = sorted(VLs,key=str.lower)
-for VL in VLs:
-    if os.path.isdir(argv[1]+VL):
-        FBs = list(os.listdir(argv[1]+VL))
-        FBs = sorted(FBs,key=str.lower)
-        for FB in FBs:
-            split = FB.rpartition('.')
-            if split[-1].lower() in ['tif','tiff','gif','jpg','jpeg','png']:
-                toDo = toDo + [argv[1]+VL+"/"+FB]
-
-toDoCount = len(toDo)
-print(len(toDo))
-
-counter = 0
-toDoAgain = []
-toDoManually = [] 
-unknowns = []
-knowns = []
+logging.basicConfig(filename=f'{(__file__)[:-3]}.log', level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s', datefmt = "%H:%M-%x")
+logger = logging.getLogger()
+logger.addHandler(logging.StreamHandler())
 
 
-# mache parallel-rechnend phase 1:
-for leftborder in [0,1]:
-    for rightborder in [0,1]:
-        for topborder in [0,1]:
-            for bottomborder in [0,1]:
-                with futures.ThreadPoolExecutor(max_workers=8) as e:
-                    fs = {e.submit(phase1, file, leftborder,rightborder,topborder,bottomborder): file for file in toDo}
-                    for f in futures.as_completed(fs):
-                        p = f.result()
-                        if p[0]=='help':
-                            toDoAgain.append(p[1])
-                        elif p[0]=='unknown':
-                            unknowns.append(p)
-                        elif p[0]!='empty':
-                            knowns.append(p)
-                            counter+=1
-                            sys.stdout.write("\rFortschritt: "+"{0:.2f}".format(100*counter/2/toDoCount)+"%")
-                        else:
-                            counter+=1
-                            sys.stdout.write("\rFortschritt: "+"{0:.2f}".format(100*counter/2/toDoCount)+"%")
-                toDo = toDoAgain
-                toDoAgain = []
+def fbs_vorbereiten(root_ordner):
+    """ entnimmt die Fragebögen aus den Ordnern und bereitet sie für
+        Bearbeitung vor. root_ordner vom Typ str
+    """
 
-toDoManually = toDo
+    logger.info("Fragebögen werden vorbereitet")
+    fbs_liste = []
 
+    if not os.path.isdir(root_ordner):
+        logger.error(root_ordner + " ist kein Verzeichnis.", exec = True)
+    if not root_ordner.endswith("/"):
+        root_ordner += "/"
 
-anzahl = len(toDoManually)
-for Questionnaire in toDoManually:
-    clear = False
-    while clear == False:
-        try:
-            erg=phase1M(Questionnaire,anzahl)
-            clear = True
-        except TypeError:
-            print("Irgendwas hat hier nicht funktioniert! Versuch es nochmal.")
-    anzahl -= 1
-    if erg == []:
-        counter+=1
-    else:
-        if erg[0] == "unknown":
-            unknowns.append(erg)
+    # sortiert die Fragebögen in dem Root-Ordner aus den jeweiligen Ordnern und
+    unsortierte_vls = list(os.listdir(root_ordner))
+    sortierte_vls = sorted(unsortierte_vls, key=str.lower)
+    for vl_num in sortierte_vls:
+        vl_pfad = root_ordner + vl_num
+        if os.path.isdir(vl_pfad):
+            fbs = list(os.listdir(vl_pfad))
+            fbs = sorted(fbs, key=str.lower)
+            for fb in fbs:
+                split = fb.rpartition('.')
+                if split[-1].lower() in ['tif','tiff','gif','jpg','jpeg','png']:
+                    fbs_liste.append(vl_pfad +"/"+ fb)
+
+    logger.info("Es gibt " +str(len(fbs_liste))+ " Fragebögen.")
+    return fbs_liste
+
+def phase1_durchfuehren(fbs_liste):
+    """ Führt die erste Phase (phase1) auf allen Fragebögen aus
+        fbs_liste beinhaltet die die Pfade der einzelnen Fragebögen
+    """
+    fbs_nacharbeiten_liste = [] 
+    fbs_unbekannt_liste = []
+    fbs_bekannt_liste = []
+    # mache parallel-rechnend phase 1
+    for leftborder in [0,1]:
+        for rightborder in [0,1]:
+            for topborder in [0,1]:
+                for bottomborder in [0,1]:
+                    logger.info(str(leftborder) + str(rightborder) + str(topborder) + str(bottomborder))
+                    with futures.ThreadPoolExecutor(max_workers=8) as e:
+                        threads = {e.submit(phase1, fb, leftborder,rightborder,topborder,bottomborder): fb for fb in fbs_liste}
+                        for thread in futures.as_completed(threads):
+                            fb_data = thread.result()
+                            if fb_data[0] == 'help':
+                                fbs_nacharbeiten_liste.append(fb_data[1])
+                            # Dieser Punkt scheint nich vorzukommen, da "unknown"
+                            # nie zurückgegeben wird
+                            # TODO: entfernen?
+                            elif fb_data[0] == 'unknown':
+                                fbs_unbekannt_liste.append(fb_data)
+                            elif fb_data[0] != 'empty':
+                                fbs_bekannt_liste.append(fb_data)
+                            else:
+                                logger.info("Hier war etwas komisch")
+                    fbs_liste = fbs_nacharbeiten_liste
+                    fbs_nacharbeiten_liste = []
+
+    fbs_nacharbeiten_liste = fbs_liste
+    logger.info("Die Phase 1 ist abgeschlossen.")
+    # fbs_nacharbeiten_liste durcharbeiten
+    anzahl = len(fbs_nacharbeiten_liste)
+    for fb in fbs_nacharbeiten_liste:
+        clear = False
+        while not clear:
+            try:
+                erg = phase1M(fb, anzahl)
+                clear = True
+            except TypeError:
+                logger.error("Hier ist ein Fehler aufgetreten! versuche es erneut", exec =True)
+        anzahl -= 1
+        
+        # füge, wenn es einen Fragebogen gibt, diesen der jeweiligen Liste hinzu
+        if erg:  # wird wahr, solange die Liste nicht leer ist
+            if erg[0] == "unknown":
+                fbs_unbekannt_liste.append(erg)
+            else:
+                fbs_bekannt_liste.append(erg)
+
+    fbs_nacharbeiten_liste = []
+
+    vls_dict = {}
+    for fb in fbs_bekannt_liste:
+        vl_num = fb[1].split("/")[-2]  # liefert VL-Nummer (Name des Oberordners)
+        name = fb[1].split("/")[-1].split(".")[0]  # liefert Dateiname ohne Endung
+        if int(name[-1])%2 == 0:
+            vls_dict[vl_num] = fb[0]+":even"
         else:
-            knowns.append(erg)
-            counter += 1
-            sys.stdout.write("\rFortschritt: "+"{0:.2f}".format(100*counter/2/toDoCount)+"%")
+            vls_dict[vl_num] = fb[0]+":odd"
 
-toDoManually = []
+    for fb in fbs_unbekannt_liste:
+        vl_num = fb[1].split("/")[-2]  # liefert VL-Nummer (Name des Oberordners)
+        name = fb[1].split("/")[-1].split(".")[0]  # liefert Dateiname ohne Endung
+        
+        # TODO was genau passiert hier?
+        if vl_num in vls_dict:
+            if (
+                (vls_dict[vl_num].split(":")[-1] == "even" and int(name[-1])%2 == 0) 
+                or (vls_dict[vl_num].split(":")[-1]=="odd" and int(name[-1])%2 == 1)
+                ):
+                fb[0]=vls_dict[vl_num].split(":")[0]
+            elif vls_dict[vl_num].split(":")[0] == "Vorlesung1":
+                fb[0]="Vorlesung2"
+            elif vls_dict[vl_num].split(":")[0] == "Vorlesung2":
+                fb[0]="Vorlesung1"
+            else:
+                fb[0]="Seminar"
+            fbs_bekannt_liste.append(fb)
 
-dic = {}
-for known in knowns:
-    vl = known[1].split("/")[-2]                        # liefert VL-Nummer (Name des Oberordners)
-    dat = known[1].split("/")[-1].split(".")[0]        # liefert Dateiname ohne Endung
-    if int(dat[-1])%2 == 0:
-        dic[vl] = known[0]+":even"
-    else:
-        dic[vl] = known[0]+":odd"
-for unknown in unknowns:
-    vl = unknown[1].split("/")[-2]                      # liefert VL-Nummer (Name des Oberordners)
-    dat = unknown[1].split("/")[-1].split(".")[0]      # liefert Dateiname ohne Endung
-    if vl in dic:
-        if (dic[vl].split(":")[-1]=="even" and int(dat[-1])%2 == 0) or (dic[vl].split(":")[-1]=="odd" and int(dat[-1])%2 == 1):
-            unknown[0]=dic[vl].split(":")[0]
-        elif dic[vl].split(":")[0]=="Vorlesung1":
-            unknown[0]="Vorlesung2"
-        elif dic[vl].split(":")[0]=="Vorlesung2":
-            unknown[0]="Vorlesung1"
         else:
-            unknown[0]="Seminar"
-        knowns.append(unknown)
-        counter+=1
-        sys.stdout.write("\rFortschritt: "+"{0:.2f}".format(100*counter/2/toDoCount)+"%")
-    else:
-        toDoManually.append(unknown[1:])
+            fbs_nacharbeiten_liste.append(fb[1:])
+
+    logger.info("Phase 2 wird beendet")
+    anzahl = len(fbs_nacharbeiten_liste)
+    for fb in fbs_nacharbeiten_liste:
+        erg = phase2M(fb, anzahl)
+        anzahl -= 1
+        if erg:
+            fbs_bekannt_liste.append(erg)
 
 
-anzahl=len(toDoManually)
-for Questionnaire in toDoManually:
-    erg=phase2M(Questionnaire,anzahl)
-    anzahl-=1
-    if erg == []:
-        counter+=1
-    else:
-        knowns.append(erg)
-        counter+=1
-        sys.stdout.write("\rFortschritt: "+"{0:.2f}".format(100*counter/2/toDoCount)+"%")
+    logger.info("Phase2M wird beendet")
+    fbs_fertig_liste = []
 
-finalList=[]
+    # TODO was ist der Unterschied zwischen fb und fragebogen?
+    # was genau kommt bei phase1 eigentlich zurück?
+    for fb in fbs_bekannt_liste:
+        typ = fb[0]
+        fragebogen = fb[1]
+        origin = fb[2]
+        width = fb[3]
+        height = fb[4]
+        vl_num = fragebogen.split("/")[-2]  # VL-Nummer 
+        bogennummer = fragebogen.split("/")[-1].split(".")[0]  # Bogennummer 
+        while(not bogennummer.isnumeric()):
+            bogennummer = bogennummer[1:]
+        fb_data = ""
+        for erg in phase2(typ, fragebogen, origin, width, height):
+            fb_data = fb_data +";"+ erg
+        if fb_data != "":
+            fbs_fertig_liste.append([vl_num,typ,bogennummer + fb_data])
 
-for known in knowns:
-    typ = known[0]
-    Questionnaire = known[1]
-    origin = known[2]
-    width = known[3]
-    height = known[4]
-    vl = Questionnaire.split("/")[-2] # VL Nummer 
-    bogennummer = Questionnaire.split("/")[-1].split(".")[0] # Bogennummer 
-    while(not bogennummer.isnumeric()):
-        bogennummer = bogennummer[1:]
-    s= ""
-    for e in phase2(typ,Questionnaire,origin,width,height):
-        s=s+";"+e
-    if s!="":
-        finalList+=[[vl,typ,bogennummer+s]]
-    counter+=1
-    sys.stdout.write("\rFortschritt: "+"{0:.2f}".format(100*counter/(len(knowns)+toDoCount))+"%")
+    fbs_fertig_liste.sort(key = lambda x: x[1]) # sortiere nach typ 
+    fbs_fertig_liste.sort(key = lambda x: x[0]) # sortiere nach vl_num (sort ist stabil)
 
-finalList.sort(key=lambda x: x[1]) # sortiere nach typ 
-finalList.sort(key=lambda x: x[0]) # sortiere nach vl nummer (sort ist stabil)
+    return fbs_fertig_liste
 
-file = open("./ergs.txt", "w")
-for s in finalList:
-    file.write(s[0]+";"+s[2]+"\n")
-file.close()
+def daten_speichern(fbs_fertig_liste:list):
+    """ speichert die Daten der Fragebögen in der Datei ergs.txt als Zeilen """    
+    
+    logger.info("Die Daten der Fragebögen werden gepeichert")
+    file = open("./ergs.txt", "w")
+    for fb_data in fbs_fertig_liste:
+        file.write(fb_data[0]+";"+fb_data[2]+"\n")
+    file.close()
+    logger.info("Die Speicherung ist beendet")
 
-
-print('\nFertig.')
-
+if __name__ == "__main__":
+    print("wurde ausgeführt")

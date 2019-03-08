@@ -1,263 +1,266 @@
 import numpy as np
 
-def minimumEditDistance(s1, s2):
-    """ berechnet die Levenshteindistanz zwischen den beiden Strings s1 und s2 """
-    if len(s1) > len(s2):
-        s1, s2 = s2, s1
-    distances = range(len(s1) + 1)
-    for index2, char2 in enumerate(s2):
-        newDistances = [index2+1]
-        for index1, char1 in enumerate(s1):
-            if char1 == char2:
-                newDistances.append(distances[index1])
-            else:
-                newDistances.append(1 + min((distances[index1],
-                                             distances[index1+1],
-                                             newDistances[-1])))
-        distances = newDistances
-    return distances[-1]
+# wird in boegen_vorbereiten übernommen
+# --------------------------------------
+# def minimum_edit_distance(s1, s2):
+#     """ berechnet die Levenshteindistanz zwischen den beiden Strings s1 und s2 """
+#     if len(s1) > len(s2):
+#         s1, s2 = s2, s1
+#     distanzen = range(len(s1) + 1)
+#     for index2, char2 in enumerate(s2):
+#         neue_distanzen = [index2+1]
+#         for index1, char1 in enumerate(s1):
+#             if char1 == char2:
+#                 neue_distanzen.append(distanzen[index1])
+#             else:
+#                 neue_distanzen.append(1 + min((distanzen[index1],
+#                                              distanzen[index1+1],
+#                                              neue_distanzen[-1])))
+#         distanzen = neue_distanzen
+#     return distanzen[-1]
 
-def isBlack(x):
-    return x<15
+# def ist_schwarz(x):
+#     """x ist gibt True zurück, wenn """
+#     return x < 15
 
-def findTop(FB,a,b,border=0):
-    for j in range(int(border*b/100),b):
-        for i in range (3*a//8,5*a//8):
-            if isBlack(FB[i,j]):
-                return (i,j)
+# def oberer_punkt(FB,a,b,border=0):
+#     for j in range(int(border*b/100),b):
+#         for i in range (3*a//8,5*a//8):
+#             if ist_schwarz(FB[i,j]):
+#                 return (i,j)
 
-def findBottom(FB,a,b,border=0):
-    for j in range(b-1-int(border*b/100),0,-1):
-        for i in range (3*a//8,5*a//8):
-            if isBlack(FB[i,j]):
-                return (i,j)
+# def unterer_punkt(FB,a,b,border=0):
+#     for j in range(b-1-int(border*b/100),0,-1):
+#         for i in range (3*a//8,5*a//8):
+#             if ist_schwarz(FB[i,j]):
+#                 return (i,j)
 
-def findLeft(FB,a,b,border=0):
-    for i in range(int(border*a/100),a):
-        for j in range (3*b//8,5*b//8):
-            if isBlack(FB[i,j]):
-                return (i,j)
+# def linker_punkt(FB,a,b,border=0):
+#     for i in range(int(border*a/100),a):
+#         for j in range (3*b//8,5*b//8):
+#             if ist_schwarz(FB[i,j]):
+#                 return (i,j)
 
-def findRight(FB,a,b,border=0):
-    for i in range(a-1-int(border*a/100),0,-1):
-        for j in range (3*b//8,5*b//8):
-            if isBlack(FB[i,j]):
-                return (i,j)
+# def rechter_punkt(FB,a,b,border=0):
+#     for i in range(a-1-int(border*a/100),0,-1):
+#         for j in range (3*b//8,5*b//8):
+#             if ist_schwarz(FB[i,j]):
+#                 return (i,j)
 
                 
 
-def shakeRight(FB,a,b,point):
-    stop = False
-    while(not stop and 0<=point[0]<a-1):
-        if   0<=point[1]<b and isBlack(FB[point[0]+1,point[1]]):
-            point=(point[0]+1,point[1])
-        elif 0<=point[1]<b-1 and isBlack(FB[point[0]+1,point[1]+1]):
-            point=(point[0]+1,point[1]+1)
-        elif 0<point[1]<b and isBlack(FB[point[0]+1,point[1]-1]):
-            point=(point[0]+1,point[1]-1)
-        elif point[0]<a-2 and 0<=point[1]<b and isBlack(FB[point[0]+2,point[1]]):
-            point=(point[0]+2,point[1])
-        elif point[0]<a-2 and 0<=point[1]<b-1 and isBlack(FB[point[0]+2,point[1]+1]):
-            point=(point[0]+2,point[1]+1)
-        elif point[0]<a-2 and 0<point[1]<b and isBlack(FB[point[0]+2,point[1]-1]):
-            point=(point[0]+2,point[1]-1)
-        else:
-            stop = True
-    return (point)
+# def shakeRight(FB,a,b,point):
+#     stop = False
+#     while(not stop and 0<=point[0]<a-1):
+#         if   0<=point[1]<b and ist_schwarz(FB[point[0]+1,point[1]]):
+#             point=(point[0]+1,point[1])
+#         elif 0<=point[1]<b-1 and ist_schwarz(FB[point[0]+1,point[1]+1]):
+#             point=(point[0]+1,point[1]+1)
+#         elif 0<point[1]<b and ist_schwarz(FB[point[0]+1,point[1]-1]):
+#             point=(point[0]+1,point[1]-1)
+#         elif point[0]<a-2 and 0<=point[1]<b and ist_schwarz(FB[point[0]+2,point[1]]):
+#             point=(point[0]+2,point[1])
+#         elif point[0]<a-2 and 0<=point[1]<b-1 and ist_schwarz(FB[point[0]+2,point[1]+1]):
+#             point=(point[0]+2,point[1]+1)
+#         elif point[0]<a-2 and 0<point[1]<b and ist_schwarz(FB[point[0]+2,point[1]-1]):
+#             point=(point[0]+2,point[1]-1)
+#         else:
+#             stop = True
+#     return (point)
 
-def shakeLeft(FB,a,b,point):
-    stop = False
-    while(not stop and point[0]>0):
-        if   0<point[1]<b-1 and isBlack(FB[point[0]-1,point[1]]):
-            point=(point[0]-1,point[1])
-        elif 0<point[1]<b-1 and isBlack(FB[point[0]-1,point[1]+1]):
-            point=(point[0]-1,point[1]+1)
-        elif 0<point[1]<b-1 and isBlack(FB[point[0]-1,point[1]-1]):
-            point=(point[0]-1,point[1]-1)
-        elif point[0]>1 and 0<point[1]<b-1 and isBlack(FB[point[0]-2,point[1]]):
-            point=(point[0]-2,point[1])
-        elif point[0]>1 and 0<point[1]<b-1 and isBlack(FB[point[0]-2,point[1]+1]):
-            point=(point[0]-2,point[1]+1)
-        elif point[0]>1 and 0<point[1]<b-1 and isBlack(FB[point[0]-2,point[1]-1]):
-            point=(point[0]-2,point[1]-1)
-        else:
-            stop = True
-    return (point)
+# def shakeLeft(FB,a,b,point):
+#     stop = False
+#     while(not stop and point[0]>0):
+#         if   0<point[1]<b-1 and ist_schwarz(FB[point[0]-1,point[1]]):
+#             point=(point[0]-1,point[1])
+#         elif 0<point[1]<b-1 and ist_schwarz(FB[point[0]-1,point[1]+1]):
+#             point=(point[0]-1,point[1]+1)
+#         elif 0<point[1]<b-1 and ist_schwarz(FB[point[0]-1,point[1]-1]):
+#             point=(point[0]-1,point[1]-1)
+#         elif point[0]>1 and 0<point[1]<b-1 and ist_schwarz(FB[point[0]-2,point[1]]):
+#             point=(point[0]-2,point[1])
+#         elif point[0]>1 and 0<point[1]<b-1 and ist_schwarz(FB[point[0]-2,point[1]+1]):
+#             point=(point[0]-2,point[1]+1)
+#         elif point[0]>1 and 0<point[1]<b-1 and ist_schwarz(FB[point[0]-2,point[1]-1]):
+#             point=(point[0]-2,point[1]-1)
+#         else:
+#             stop = True
+#     return (point)
 
-def shakeDown(FB,a,b,point):
-    stop = False
-    while(not stop and point[1]<b-1):
-        if   0<point[0]<a-1 and isBlack(FB[point[0],point[1]+1]):
-            point=(point[0],point[1]+1)
-        elif 0<point[0]<a-1 and isBlack(FB[point[0]+1,point[1]+1]):
-            point=(point[0]+1,point[1]+1)
-        elif 0<point[0]<a-1 and isBlack(FB[point[0]-1,point[1]+1]):
-            point=(point[0]-1,point[1]+1)
-        elif point[1]<b-2 and 0<point[0]<a-1 and isBlack(FB[point[0],point[1]+2]):
-            point=(point[0],point[1]+2)
-        elif point[1]<b-2 and 0<point[0]<a-1 and isBlack(FB[point[0]+1,point[1]+2]):
-            point=(point[0]+1,point[1]+2)
-        elif point[1]<b-2 and 0<point[0]<a-1 and isBlack(FB[point[0]-1,point[1]+2]):
-            point=(point[0]-1,point[1]+2)
-        else:
-            stop = True
-    return (point)
+# def shakeDown(FB,a,b,point):
+#     stop = False
+#     while(not stop and point[1]<b-1):
+#         if   0<point[0]<a-1 and ist_schwarz(FB[point[0],point[1]+1]):
+#             point=(point[0],point[1]+1)
+#         elif 0<point[0]<a-1 and ist_schwarz(FB[point[0]+1,point[1]+1]):
+#             point=(point[0]+1,point[1]+1)
+#         elif 0<point[0]<a-1 and ist_schwarz(FB[point[0]-1,point[1]+1]):
+#             point=(point[0]-1,point[1]+1)
+#         elif point[1]<b-2 and 0<point[0]<a-1 and ist_schwarz(FB[point[0],point[1]+2]):
+#             point=(point[0],point[1]+2)
+#         elif point[1]<b-2 and 0<point[0]<a-1 and ist_schwarz(FB[point[0]+1,point[1]+2]):
+#             point=(point[0]+1,point[1]+2)
+#         elif point[1]<b-2 and 0<point[0]<a-1 and ist_schwarz(FB[point[0]-1,point[1]+2]):
+#             point=(point[0]-1,point[1]+2)
+#         else:
+#             stop = True
+#     return (point)
 
-def shakeUp(FB,a,b,point):
-    stop = False
-    while(not stop and point[1]>0):
-        if   0<point[0]<a-1 and isBlack(FB[point[0],point[1]-1]):
-            point=(point[0],point[1]-1)
-        elif 0<point[0]<a-1 and isBlack(FB[point[0]+1,point[1]-1]):
-            point=(point[0]+1,point[1]-1)
-        elif 0<point[0]<a-1 and  isBlack(FB[point[0]-1,point[1]-1]):
-            point=(point[0]-1,point[1]-1)
-        elif point[1]>1 and 0<point[0]<a-1 and isBlack(FB[point[0],point[1]-2]):
-            point=(point[0],point[1]-2)
-        elif point[1]>1 and 0<point[0]<a-1 and isBlack(FB[point[0]+1,point[1]-2]):
-            point=(point[0]+1,point[1]-2)
-        elif point[1]>1 and 0<point[0]<a-1 and  isBlack(FB[point[0]-1,point[1]-2]):
-            point=(point[0]-1,point[1]-2)
-        else:
-            stop = True
-    return (point)
+# def shakeUp(FB,a,b,point):
+#     stop = False
+#     while(not stop and point[1]>0):
+#         if   0<point[0]<a-1 and ist_schwarz(FB[point[0],point[1]-1]):
+#             point=(point[0],point[1]-1)
+#         elif 0<point[0]<a-1 and ist_schwarz(FB[point[0]+1,point[1]-1]):
+#             point=(point[0]+1,point[1]-1)
+#         elif 0<point[0]<a-1 and  ist_schwarz(FB[point[0]-1,point[1]-1]):
+#             point=(point[0]-1,point[1]-1)
+#         elif point[1]>1 and 0<point[0]<a-1 and ist_schwarz(FB[point[0],point[1]-2]):
+#             point=(point[0],point[1]-2)
+#         elif point[1]>1 and 0<point[0]<a-1 and ist_schwarz(FB[point[0]+1,point[1]-2]):
+#             point=(point[0]+1,point[1]-2)
+#         elif point[1]>1 and 0<point[0]<a-1 and  ist_schwarz(FB[point[0]-1,point[1]-2]):
+#             point=(point[0]-1,point[1]-2)
+#         else:
+#             stop = True
+#     return (point)
 
 
-def isRed(x):
-    return x[0]>240 and x[1]<15 and x[2] < 15
+# def isRed(x):
+#     return x[0]>240 and x[1]<15 and x[2] < 15
 
-def isRGBBlack(x):
-    return x[0]<15 and x[1]<15 and x[2]<15
+# def isRGBBlack(x):
+#     return x[0]<15 and x[1]<15 and x[2]<15
 
-def findRedTop(FB,a,b):
-    for j in range(0,b):
-        for i in range (3*a//8,5*a//8):
-            if isRed(FB[i,j]):
-                return (i,j)
+# def findRedTop(FB,a,b):
+#     for j in range(0,b):
+#         for i in range (3*a//8,5*a//8):
+#             if isRed(FB[i,j]):
+#                 return (i,j)
 
-def findRedBottom(FB,a,b):
-    for j in range(b-1,0,-1):
-        for i in range (3*a//8,5*a//8):
-            if isRed(FB[i,j]):
-                return (i,j)
+# def findRedBottom(FB,a,b):
+#     for j in range(b-1,0,-1):
+#         for i in range (3*a//8,5*a//8):
+#             if isRed(FB[i,j]):
+#                 return (i,j)
 
-def findRedLeft(FB,a,b):
-    for i in range(0,a):
-        for j in range (3*b//8,5*b//8):
-            if isRed(FB[i,j]):
-                return (i,j)
+# def findRedLeft(FB,a,b):
+#     for i in range(0,a):
+#         for j in range (3*b//8,5*b//8):
+#             if isRed(FB[i,j]):
+#                 return (i,j)
 
-def findRedRight(FB,a,b):
-    for i in range(a-1,0,-1):
-        for j in range (3*b//8,5*b//8):
-            if isRed(FB[i,j]):
-                return (i,j)
+# def findRedRight(FB,a,b):
+#     for i in range(a-1,0,-1):
+#         for j in range (3*b//8,5*b//8):
+#             if isRed(FB[i,j]):
+#                 return (i,j)
 
-def shakeRightRGB(FB,a,b,point):
-    stop = False
-    while(not stop and 0<=point[0]<a-1):
-        if 0<=point[1]<b and isRGBBlack(FB[point[0]+1,point[1]]):
-            point=(point[0]+1,point[1])
-        elif 0<=point[1]<b-1 and isRGBBlack(FB[point[0]+1,point[1]+1]):
-            point=(point[0]+1,point[1]+1)
-        elif 0<point[1]<b and isRGBBlack(FB[point[0]+1,point[1]-1]):
-            point=(point[0]+1,point[1]-1)
-        elif point[0]<a-2 and 0<=point[1]<b and isRGBBlack(FB[point[0]+2,point[1]]):
-            point=(point[0]+2,point[1])
-        elif point[0]<a-2 and 0<=point[1]<b-1 and isRGBBlack(FB[point[0]+2,point[1]+1]):
-            point=(point[0]+2,point[1]+1)
-        elif point[0]<a-2 and 0<point[1]<b and isRGBBlack(FB[point[0]+2,point[1]-1]):
-            point=(point[0]+2,point[1]-1)
-        else:
-            stop = True
-    return (point)
+# def shakeRightRGB(FB,a,b,point):
+#     stop = False
+#     while(not stop and 0<=point[0]<a-1):
+#         if 0<=point[1]<b and isRGBBlack(FB[point[0]+1,point[1]]):
+#             point=(point[0]+1,point[1])
+#         elif 0<=point[1]<b-1 and isRGBBlack(FB[point[0]+1,point[1]+1]):
+#             point=(point[0]+1,point[1]+1)
+#         elif 0<point[1]<b and isRGBBlack(FB[point[0]+1,point[1]-1]):
+#             point=(point[0]+1,point[1]-1)
+#         elif point[0]<a-2 and 0<=point[1]<b and isRGBBlack(FB[point[0]+2,point[1]]):
+#             point=(point[0]+2,point[1])
+#         elif point[0]<a-2 and 0<=point[1]<b-1 and isRGBBlack(FB[point[0]+2,point[1]+1]):
+#             point=(point[0]+2,point[1]+1)
+#         elif point[0]<a-2 and 0<point[1]<b and isRGBBlack(FB[point[0]+2,point[1]-1]):
+#             point=(point[0]+2,point[1]-1)
+#         else:
+#             stop = True
+#     return (point)
 
-def shakeLeftRGB(FB,a,b,point):
-    stop = False
-    while(not stop and point[0]>0):
-        if 0<point[1]<b-1 and isRGBBlack(FB[point[0]-1,point[1]]):
-            point=(point[0]-1,point[1])
-        elif 0<point[1]<b-1 and isRGBBlack(FB[point[0]-1,point[1]+1]):
-            point=(point[0]-1,point[1]+1)
-        elif 0<point[1]<b-1 and isRGBBlack(FB[point[0]-1,point[1]-1]):
-            point=(point[0]-1,point[1]-1)
-        elif point[0]>1 and 0<point[1]<b-1 and isRGBBlack(FB[point[0]-2,point[1]]):
-            point=(point[0]-2,point[1])
-        elif point[0]>1 and 0<point[1]<b-1 and isRGBBlack(FB[point[0]-2,point[1]+1]):
-            point=(point[0]-2,point[1]+1)
-        elif point[0]>1 and 0<point[1]<b-1 and isRGBBlack(FB[point[0]-2,point[1]-1]):
-            point=(point[0]-2,point[1]-1)
-        else:
-            stop = True
-    return (point)
+# def shakeLeftRGB(FB,a,b,point):
+#     stop = False
+#     while(not stop and point[0]>0):
+#         if 0<point[1]<b-1 and isRGBBlack(FB[point[0]-1,point[1]]):
+#             point=(point[0]-1,point[1])
+#         elif 0<point[1]<b-1 and isRGBBlack(FB[point[0]-1,point[1]+1]):
+#             point=(point[0]-1,point[1]+1)
+#         elif 0<point[1]<b-1 and isRGBBlack(FB[point[0]-1,point[1]-1]):
+#             point=(point[0]-1,point[1]-1)
+#         elif point[0]>1 and 0<point[1]<b-1 and isRGBBlack(FB[point[0]-2,point[1]]):
+#             point=(point[0]-2,point[1])
+#         elif point[0]>1 and 0<point[1]<b-1 and isRGBBlack(FB[point[0]-2,point[1]+1]):
+#             point=(point[0]-2,point[1]+1)
+#         elif point[0]>1 and 0<point[1]<b-1 and isRGBBlack(FB[point[0]-2,point[1]-1]):
+#             point=(point[0]-2,point[1]-1)
+#         else:
+#             stop = True
+#     return (point)
 
-def shakeDownRGB(FB,a,b,point):
-    stop = False
-    while(not stop and point[1]<b-1):
-        if 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]+1]):
-            point=(point[0],point[1]+1)
-        elif 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]+1]):
-            point=(point[0]+1,point[1]+1)
-        elif 0<point[0]<a-1 and isRGBBlack(FB[point[0]-1,point[1]+1]):
-            point=(point[0]-1,point[1]+1)
-        elif point[1]<b-2 and 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]+2]):
-            point=(point[0],point[1]+2)
-        elif point[1]<b-2 and 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]+2]):
-            point=(point[0]+1,point[1]+2)
-        elif point[1]<b-2 and 0<point[0]<a-1 and isRGBBlack(FB[point[0]-1,point[1]+2]):
-            point=(point[0]-1,point[1]+2)
-        else:
-            stop = True
-    return (point)
+# def shakeDownRGB(FB,a,b,point):
+#     stop = False
+#     while(not stop and point[1]<b-1):
+#         if 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]+1]):
+#             point=(point[0],point[1]+1)
+#         elif 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]+1]):
+#             point=(point[0]+1,point[1]+1)
+#         elif 0<point[0]<a-1 and isRGBBlack(FB[point[0]-1,point[1]+1]):
+#             point=(point[0]-1,point[1]+1)
+#         elif point[1]<b-2 and 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]+2]):
+#             point=(point[0],point[1]+2)
+#         elif point[1]<b-2 and 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]+2]):
+#             point=(point[0]+1,point[1]+2)
+#         elif point[1]<b-2 and 0<point[0]<a-1 and isRGBBlack(FB[point[0]-1,point[1]+2]):
+#             point=(point[0]-1,point[1]+2)
+#         else:
+#             stop = True
+#     return (point)
 
-def shakeUpRGB(FB,a,b,point):
-    stop = False
-    while(not stop and point[1]>0):
-        if 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]-1]):
-            point=(point[0],point[1]-1)
-        elif 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]-1]):
-            point=(point[0]+1,point[1]-1)
-        elif 0<point[0]<a-1 and  isRGBBlack(FB[point[0]-1,point[1]-1]):
-            point=(point[0]-1,point[1]-1)
-        elif point[1]>1 and 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]-2]):
-            point=(point[0],point[1]-2)
-        elif point[1]>1 and 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]-2]):
-            point=(point[0]+1,point[1]-2)
-        elif point[1]>1 and 0<point[0]<a-1 and  isRGBBlack(FB[point[0]-1,point[1]-2]):
-            point=(point[0]-1,point[1]-2)
-        else:
-            stop = True
-    return (point)
+# def shakeUpRGB(FB,a,b,point):
+#     stop = False
+#     while(not stop and point[1]>0):
+#         if 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]-1]):
+#             point=(point[0],point[1]-1)
+#         elif 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]-1]):
+#             point=(point[0]+1,point[1]-1)
+#         elif 0<point[0]<a-1 and  isRGBBlack(FB[point[0]-1,point[1]-1]):
+#             point=(point[0]-1,point[1]-1)
+#         elif point[1]>1 and 0<point[0]<a-1 and isRGBBlack(FB[point[0],point[1]-2]):
+#             point=(point[0],point[1]-2)
+#         elif point[1]>1 and 0<point[0]<a-1 and isRGBBlack(FB[point[0]+1,point[1]-2]):
+#             point=(point[0]+1,point[1]-2)
+#         elif point[1]>1 and 0<point[0]<a-1 and  isRGBBlack(FB[point[0]-1,point[1]-2]):
+#             point=(point[0]-1,point[1]-2)
+#         else:
+#             stop = True
+#     return (point)
 
-def searchBlack(FB,a,b,point,diam):
-    r=diam//2
-    for i in range(0,r+1):
-        for l in range(point[0]-i,point[0]+i):
-            if 0<=l<a and 0<=point[1]-i<b and isBlack(FB[l,point[1]-i]):
-                return (l,point[1]-i)
-            if 0<=l<a and 0<=point[1]+i<b and isBlack(FB[l,point[1]+i]):
-                return (l,point[1]+i)
-        for l in range(point[1]-i,point[1]+i):
-            if 0<=l<b and 0<=point[0]-i<a and isBlack(FB[point[0]-i,l]):
-                return (point[0]-i,l)
-            if 0<=l<b and 0<=point[0]+i<a and isBlack(FB[point[0]+i,l]):
-                return (point[0]+i,l)
-    return point
+# def searchBlack(FB,a,b,point,diam):
+#     r=diam//2
+#     for i in range(0,r+1):
+#         for l in range(point[0]-i,point[0]+i):
+#             if 0<=l<a and 0<=point[1]-i<b and ist_schwarz(FB[l,point[1]-i]):
+#                 return (l,point[1]-i)
+#             if 0<=l<a and 0<=point[1]+i<b and ist_schwarz(FB[l,point[1]+i]):
+#                 return (l,point[1]+i)
+#         for l in range(point[1]-i,point[1]+i):
+#             if 0<=l<b and 0<=point[0]-i<a and ist_schwarz(FB[point[0]-i,l]):
+#                 return (point[0]-i,l)
+#             if 0<=l<b and 0<=point[0]+i<a and ist_schwarz(FB[point[0]+i,l]):
+#                 return (point[0]+i,l)
+#     return point
 
-def searchRGBBlack(FB,a,b,point,diam):
-    r=diam//2
-    for i in range(0,r+1):
-        for l in range(point[0]-i,point[0]+i):
-            if 0<=l<a and 0<=point[1]-i<b and isRGBBlack(FB[l,point[1]-i]):
-                return (l,point[1]-i)
-            if 0<=l<a and 0<=point[1]+i<b and isRGBBlack(FB[l,point[1]+i]):
-                return (l,point[1]+i)
-        for l in range(point[1]-i,point[1]+i):
-            if 0<=l<b and 0<=point[0]-i<a and isRGBBlack(FB[point[0]-i,l]):
-                return (point[0]-i,l)
-            if 0<=l<b and 0<=point[0]+i<a and isRGBBlack(FB[point[0]+i,l]):
-                return (point[0]+i,l)
-    return point
+# def searchRGBBlack(FB,a,b,point,diam):
+#     r=diam//2
+#     for i in range(0,r+1):
+#         for l in range(point[0]-i,point[0]+i):
+#             if 0<=l<a and 0<=point[1]-i<b and isRGBBlack(FB[l,point[1]-i]):
+#                 return (l,point[1]-i)
+#             if 0<=l<a and 0<=point[1]+i<b and isRGBBlack(FB[l,point[1]+i]):
+#                 return (l,point[1]+i)
+#         for l in range(point[1]-i,point[1]+i):
+#             if 0<=l<b and 0<=point[0]-i<a and isRGBBlack(FB[point[0]-i,l]):
+#                 return (point[0]-i,l)
+#             if 0<=l<b and 0<=point[0]+i<a and isRGBBlack(FB[point[0]+i,l]):
+#                 return (point[0]+i,l)
+#     return point
 
 def readItem(FB,rel,origin,width,height):
     e1 = np.array((1,0))

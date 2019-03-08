@@ -5,6 +5,7 @@ from numpy import linalg as LA
 import subprocess 
 from tkinter import Label, Button, Canvas, StringVar, Tk, X, RIGHT, LEFT
 
+from auslesen.boegen_vorbereiten import minimum_edit_distance
 from .boegen_vorbereiten import oberer_punkt, unterer_punkt, linker_punkt, rechter_punkt
 from .boegen_vorbereiten import findRedTop, findRedBottom, findRedLeft, findRedRight
 from .boegen_vorbereiten import shakeDown, shakeLeft, shakeRight, shakeUp, shakeUp
@@ -409,13 +410,13 @@ def phase1M(Questionnaire, anzahl):
     typ = ""
 
     for word in s.split():
-        if Levenshtein.distance(word,'Vorlesungen')<5:
+        if minimum_edit_distance(word,'Vorlesungen')<5:
             typ = "Vorlesung1"
             break
-        elif not Levenshtein.distance(word,'Fragebogen')<5 and (Levenshtein.distance(word,'Wurde')<3 or Levenshtein.distance(word,'Übungstermin')<5 or Levenshtein.distance(word,'angeboten?')<5):
+        elif not minimum_edit_distance(word,'Fragebogen')<5 and (minimum_edit_distance(word,'Wurde')<3 or minimum_edit_distance(word,'Übungstermin')<5 or minimum_edit_distance(word,'angeboten?')<5):
             typ = "Vorlesung2"
             break
-        elif Levenshtein.distance(word,'Seminare')<5 or Levenshtein.distance(word,'Praktika')<5:
+        elif minimum_edit_distance(word,'Seminare')<5 or minimum_edit_distance(word,'Praktika')<5:
             typ = "Seminar"
             break
 

@@ -25,18 +25,18 @@ class EvalTest(unittest.TestCase):
         test_ordner = root.parent /'test_Boegen'
         return test_ordner
 
-# class AuslesenTest(EvalTest):
+class AuslesenTest(EvalTest):
         
-#     def test_frageboegen_lesen(self):
+    def test_frageboegen_lesen(self):
 
-#         testordner = self.test_testordner()
-#         testordner = str(testordner.resolve())
-#         fbs_liste = readOutQuestionaires.fbs_vorbereiten(testordner)
-#         print("vorbereitung abgeschlossen")
-#         fbs_fertig_liste = readOutQuestionaires.phase1_durchfuehren(fbs_liste)
-#         print("phase1 durchgeführt")
-#         readOutQuestionaires.daten_speichern(fbs_fertig_liste)
-#         print("alle daten gespeichert")
+        testordner = self.test_testordner()
+        testordner = str(testordner.resolve())
+        fbs_liste = readOutQuestionaires.fbs_vorbereiten(testordner)
+        print("vorbereitung abgeschlossen")
+        fbs_fertig_liste = readOutQuestionaires.phase1_durchfuehren(fbs_liste)
+        print("phase1 durchgeführt")
+        readOutQuestionaires.daten_speichern(fbs_fertig_liste)
+        print("alle daten gespeichert")
 
 
 class BoegenVorbereiten(EvalTest):

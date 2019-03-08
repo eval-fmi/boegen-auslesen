@@ -650,8 +650,10 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     # so das nur noch diese beiden Farben im Bild vorkommen
     # Dabei gilt 0=schwarz und 255=weiß. Es gibt nur diese beiden Werte
     # (https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=Image.convert#PIL.Image.Image.convert)
-    Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
-    
+    try:
+        Fragebogen = Fragebogen.convert('1', dither=Image.NONE)
+    except:
+        print(Questionnaire)
     # Ein vorbereitetes Bild wird erstellt
     Fragebogen = bild_ist_vorbereitet(
         Fragebogen, 

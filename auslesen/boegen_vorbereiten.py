@@ -601,7 +601,7 @@ def bogen_drehen(Fragebogen):
     # TODO: Das hier gefällt mir überhaupt nicht und muss nochmal geändert werden
     return [Fragebogen, Top, Bottom, Left, Right]
 
-def typ_des_fbs(Questionnaire):
+def typ_des_fbs(cropped_Questionnaire):
     """ 
         gibt den Typ des Fragebogens zurück, bisher wird deutsch ('deu') und
         englisch ('eng') als Sprachen unterstützt. Sollt der Fragebogen keiner
@@ -609,8 +609,8 @@ def typ_des_fbs(Questionnaire):
     """
     # Texterkennung tesseract wird auf Datei.crop angewendet mit Sprache Deutsch und Ergebnis an stdout geschickt
     # Das Tesseract-Modul muss wird genutzt, um den Typ der Veranstaltung zu bekommen
-    s_deu = tesseract.image_to_string(Questionnaire, 'deu') 
-    s_eng = tesseract.image_to_string(Questionnaire, 'eng')
+    s_deu = tesseract.image_to_string(cropped_Questionnaire, 'deu') 
+    s_eng = tesseract.image_to_string(cropped_Questionnaire, 'eng')
 
     typ = ""
     # war bis auf "wurde" und "meetings" vorher auf 5
@@ -699,13 +699,14 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     Fragebogen.crop(box).save(str(Questionnaire) + ".crop", "PNG",optimize=True)
 
     typ = typ_des_fbs(str(Questionnaire) + ".crop")
-    # Wenn ein leerer String als Typ zurückgegeben wird
-    if not typ:
-        return ["help", Questionnaire]
 
     # TODO: bisher gibt es keinen guten Grund, dass diese Datei existiert,
     #       aha der Ort wird zurückgegeben
     Fragebogen.save(str(Questionnaire) + ".processed", "PNG",optimize=True)
+    
+    # Wenn ein leerer String als Typ zurückgegeben wird
+    if not typ:
+        return ["help",Questionnaire]
 
     return [typ,str(Questionnaire)+".processed",origin,width,height]
 

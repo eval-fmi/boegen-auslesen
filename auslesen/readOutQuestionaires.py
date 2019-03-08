@@ -105,11 +105,14 @@ def phase1_durchfuehren(fbs_liste):
                         threads = {e.submit(phase1, fb, leftborder,rightborder,topborder,bottomborder): fb for fb in fbs_liste}
                         for thread in futures.as_completed(threads):
                             fb_data = thread.result()
-                            if fb_data[0]=='help':
+                            if fb_data[0] == 'help':
                                 fbs_nacharbeiten_liste.append(fb_data[1])
-                            elif fb_data[0]=='unknown':
+                            # Dieser Punkt scheint nich vorzukommen, da "unknown"
+                            # nie zurückgegeben wird
+                            # TODO: entfernen?
+                            elif fb_data[0] == 'unknown':
                                 fbs_unbekannt_liste.append(fb_data)
-                            elif fb_data[0]!='empty':
+                            elif fb_data[0] != 'empty':
                                 fbs_bekannt_liste.append(fb_data)
                             else:
                                 logger.info("Hier war etwas komisch")
@@ -127,7 +130,7 @@ def phase1_durchfuehren(fbs_liste):
                 erg = phase1M(fb, anzahl)
                 clear = True
             except TypeError:
-                logger.error("Hier ist ein fehler aufgetreten! versuche es erneut", exec =True)
+                logger.error("Hier ist ein Fehler aufgetreten! versuche es erneut", exec =True)
         anzahl -= 1
         
         # füge, wenn es einen Fragebogen gibt, diesen der jeweiligen Liste hinzu

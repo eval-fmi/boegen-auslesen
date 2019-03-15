@@ -2,7 +2,7 @@
 
 
 """
-Sortiert die Einträge in ergs.txt nach der Veranstalung.
+Sortiert die Einträge in ergs.txt nach der Veranstaltung.
 """
 
 vls = set()

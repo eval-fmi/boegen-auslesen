@@ -32,6 +32,12 @@ def ist_schwarz(x):
     """
     return x < 15
 
+""" 
+üäöoanero
+iratenortiane
+iratenroinart """
+
+
 # Suchen der Koordinaten der Mittelstriche
 def oberer_punkt(FB,a,b,border=0):
     """gibt den obersten (kleinster y-Wert) schwarzen Punkt zurück"""
@@ -675,14 +681,17 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
     
     gedrehte_liste = bogen_drehen(Fragebogen)
     Fragebogen = gedrehte_liste[0]
-    Top = gedrehte_liste[1]
-    Bottom = gedrehte_liste[2]
-    Left = gedrehte_liste[3]
-    Right = gedrehte_liste[4]
+    try:
+        if Fragebogen == ["help"]:
+            # Es ist ein Problem aufgetreten
+            return ["help", Questionnaire]
+        Top = gedrehte_liste[1]
+        Bottom = gedrehte_liste[2]
+        Left = gedrehte_liste[3]
+        Right = gedrehte_liste[4]
+    except:
+        print(Questionnaire)
 
-    if Fragebogen == ["help"]:
-        # Es ist ein Problem aufgetreten
-        return ["help", Questionnaire]
 
     # TODO: Wie wird das weiterverwendet height, width, origin
     height = .01*(Bottom[1]-Top[1])

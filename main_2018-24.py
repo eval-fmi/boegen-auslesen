@@ -2,7 +2,7 @@ import sys
 import os
 import logging
 
-from .readOutQuestionaires import fbs_vorbereiten, phase1_durchfuehren, daten_speichern
+from auslesen.readOutQuestionaires import fbs_vorbereiten, phase1_durchfuehren, daten_speichern
 
 logging.basicConfig(filename=f'{(__file__)[:-3]}.log', level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s', datefmt = "%H:%M-%x")
 logger = logging.getLogger()
@@ -20,8 +20,8 @@ def path_auslesen():
 def path_vorbereiten(path):
     if not os.path.isdir(path):
         logger.error(path + " ist kein Verzeichnis.", exec = True)
-    if not path.endswith("/"):
-        path += "/"
+    # if not path.endswith("/"):
+    #    path += "/"
     return path
 
 def auslesen_starten(path):
@@ -30,6 +30,6 @@ def auslesen_starten(path):
     daten_speichern(fbs_fertig_liste)
 
 if __name__ == "__main__":
-    path = path_auslesen()
+    path = "D://Eval//Ergebnisse_2018-24_1-50//"
     path = path_vorbereiten(path)
     auslesen_starten(path)

@@ -7,7 +7,7 @@ Sortiert die Einträge in ergs.txt nach der Veranstaltung.
 
 vls = set()
 
-file = open("./ergs.txt", "r")
+file = open("D://Eval//boegen-auslesen//auslesen//ergs.txt", "r")
 for line in file:
     hilf = line.split(";",2)
     vls.add(hilf[0])
@@ -21,7 +21,7 @@ vlsdic = {}
 for vl in vls:
     vlsdic.update({int(vl) : []})
 
-file = open("./ergs.txt", "r")
+file = open("D://Eval//boegen-auslesen//auslesen//ergs.txt", "r")
 for line in file:
     hilf = line.split(";",2)
     vlsdic[int(hilf[0])] += [hilf[2]]
@@ -46,7 +46,7 @@ for v in vlsdic:
         vlsdic[v] = hilf
 
 
-file = open("./presql.txt", "w")
+file = open("D://Eval//boegen-auslesen//auslesen//presql.txt", "w")
 for s in vlsdic:
     for k in range(len(vlsdic[s])):
         file.write(str(s)+";"+str(k)+";"+vlsdic[s][k].strip()+"\n")

@@ -30,6 +30,6 @@ def auslesen_starten(path):
     daten_speichern(fbs_fertig_liste)
 
 if __name__ == "__main__":
-    path = "D://Eval//Ergebnisse_2018-24_1-50//"
+    path = "D://Eval//Ergebnisse_2018-24_102-235"
     path = path_vorbereiten(path)
     auslesen_starten(path)

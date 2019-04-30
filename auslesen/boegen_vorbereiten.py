@@ -678,10 +678,10 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
             raise TypeError
 
 # start die weiter bearbeitung und die Suche nach den Ecken
-    
-    gedrehte_liste = bogen_drehen(Fragebogen)
-    Fragebogen = gedrehte_liste[0]
     try:
+        gedrehte_liste = bogen_drehen(Fragebogen)
+        Fragebogen = gedrehte_liste[0]
+
         if Fragebogen == ["help"]:
             # Es ist ein Problem aufgetreten
             return ["help", Questionnaire]
@@ -694,6 +694,7 @@ def phase1(Questionnaire,leftborder=0,rightborder=0,topborder=0,bottomborder=0):
 
 
     # TODO: Wie wird das weiterverwendet height, width, origin
+
     height = .01*(Bottom[1]-Top[1])
     width = .01*(Right[0]-Left[0])
 

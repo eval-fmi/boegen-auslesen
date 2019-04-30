@@ -5,14 +5,15 @@ Durch dieses Skript wird eine Datei erstellt, indem die Daten der Fragebögen
 in SQL-Code stehen.
 """
  
-with open("./presql.txt", "r") as f:
+with open("D://Eval//boegen-auslesen//auslesen//presql.txt", "r") as f:
     lines = f.read().splitlines()
-file = open("./ergs.sql", "w")
+file = open("D://Eval//boegen-auslesen//auslesen//ergs.sql", "w")
 
 anz_lines = len(lines)
 i = 0
 
 while i < anz_lines:
+
     data = lines[i].split(";")
     answers = data[1:]
     print(f"wir sind bei Vl {data[0]}")
@@ -235,5 +236,7 @@ while i < anz_lines:
         i += 1
     else:
         i += 1
-        
+    
+
 file.close()
+
